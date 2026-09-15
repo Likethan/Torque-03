@@ -1,0 +1,283 @@
+/* ============================================================================
+   ARRIVAL TO FORM SCROLL STAGE STYLING (Step 3)
+   ============================================================================ */
+
+.arrival-form-stage {
+  position: relative;
+  width: 100%;
+  height: var(--stage-height-desktop, 280vh);
+  background-color: var(--color-bg-primary);
+}
+
+/* Nav anchor offset for Form */
+.stage-form-anchor {
+  position: absolute;
+  top: 38%;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   STICKY VIEWPORT
+   -------------------------------------------------------------------------- */
+
+.stage-sticky-viewport {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   SHARED VEHICLE VISUAL (Remains connected between Arrival & Form)
+   -------------------------------------------------------------------------- */
+
+.stage-visual-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+.stage-vehicle-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.stage-vehicle-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  transform-origin: center center;
+}
+
+.stage-vehicle-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    hsla(220, 10%, 6%, 0.96) 0%,
+    hsla(220, 10%, 6%, 0.55) 30%,
+    hsla(220, 10%, 6%, 0.15) 60%,
+    hsla(220, 10%, 6%, 0.6) 100%
+  );
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   HERO LAYER (Arrival & Phase 1)
+   -------------------------------------------------------------------------- */
+
+.stage-hero-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: var(--space-2xl);
+  will-change: transform, opacity;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   FORM LAYER (Phase 2 & Form)
+   -------------------------------------------------------------------------- */
+
+.stage-form-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 5.5rem;
+  padding-bottom: var(--space-xl);
+  will-change: transform, opacity;
+  box-sizing: border-box;
+}
+
+.stage-form-top {
+  max-width: 620px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(
+    to bottom,
+    hsla(220, 10%, 6%, 0.85) 0%,
+    transparent 100%
+  );
+  padding: var(--space-md) var(--space-lg);
+  border-left: 1px solid var(--color-accent-muted);
+}
+
+.stage-form-bottom {
+  width: 100%;
+  background: linear-gradient(
+    to top,
+    hsla(220, 10%, 6%, 0.95) 0%,
+    hsla(220, 10%, 6%, 0.8) 70%,
+    transparent 100%
+  );
+  padding-top: var(--space-md);
+}
+
+/* --------------------------------------------------------------------------
+   ANNOTATIONS WRAPPER
+   -------------------------------------------------------------------------- */
+
+.stage-annotations-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  will-change: opacity;
+  transition: opacity 250ms ease;
+}
+
+/* --------------------------------------------------------------------------
+   STAGE PROGRESS RAIL (Editorial Scroll Indicator)
+   -------------------------------------------------------------------------- */
+
+.stage-progress-rail {
+  position: absolute;
+  right: var(--space-lg);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 12;
+  pointer-events: none;
+}
+
+.stage-progress-track {
+  width: 2px;
+  height: 90px;
+  background-color: var(--color-border);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+.stage-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-accent);
+  transition: height 120ms linear;
+}
+
+.stage-progress-code {
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-tertiary);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE DESIGN
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .arrival-form-stage {
+    height: var(--stage-height-tablet, 240vh);
+  }
+
+  .stage-progress-rail {
+    display: none;
+  }
+
+  .stage-form-top {
+    max-width: 520px;
+    padding: var(--space-sm) var(--space-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .arrival-form-stage {
+    height: var(--stage-height-mobile, 190vh);
+  }
+
+  .stage-hero-layer {
+    padding-bottom: var(--space-xl);
+  }
+
+  .stage-form-layer {
+    padding-top: 4.5rem;
+    padding-bottom: var(--space-md);
+  }
+
+  .stage-form-top {
+    max-width: 100%;
+    padding: var(--space-sm);
+    border-left: none;
+    border-top: 1px solid var(--color-accent-muted);
+  }
+
+  .stage-form-bottom {
+    padding-top: var(--space-xs);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION OVERRIDES
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .arrival-form-stage {
+    height: auto !important;
+  }
+
+  .stage-sticky-viewport {
+    position: relative !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  .stage-visual-layer {
+    position: relative !important;
+    inset: auto !important;
+    height: 60vh !important;
+    transform: none !important;
+  }
+
+  .stage-hero-layer,
+  .stage-form-layer {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    padding: var(--space-xl) var(--container-pad) !important;
+  }
+
+  .stage-annotations-wrapper {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+  }
+
+  .stage-progress-rail {
+    display: none !important;
+  }
+}

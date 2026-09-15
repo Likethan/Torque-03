@@ -1,0 +1,62 @@
+/* ============================================================================
+   SPECIFICATIONS SECTION
+   ============================================================================ */
+
+.specs {
+  background-color: var(--color-bg-secondary);
+}
+
+.specs__header {
+  margin-bottom: var(--space-3xl);
+}
+
+.specs__label {
+  margin-bottom: var(--space-md);
+}
+
+.specs__title {
+  margin-bottom: var(--space-lg);
+}
+
+.specs__intro {
+  max-width: 55ch;
+}
+
+.specs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg);
+}
+
+.spec-card {
+  padding: var(--space-xl);
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-primary);
+  /* motion-card class handles hover lift */
+}
+
+.spec-card__value {
+  margin-bottom: var(--space-xs);
+}
+
+.spec-card__label {
+  margin-bottom: var(--space-sm);
+}
+
+.spec-card__description {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  line-height: var(--leading-relaxed);
+}
+
+@media (max-width: 640px) {
+  .specs__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .specs__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,72 @@
+/* ============================================================================
+   SCROLL SEQUENCE STYLING (Step 3)
+   ============================================================================ */
+
+.scroll-sequence-track {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-bg-primary);
+}
+
+.scroll-sequence-sticky {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-sequence-interaction-rig {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.scroll-sequence-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scroll-sequence-film-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 55%,
+    hsla(220, 10%, 4%, 0.45) 85%,
+    hsla(220, 10%, 4%, 0.8) 100%
+  );
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-sequence-track {
+    height: auto !important;
+  }
+
+  .scroll-sequence-sticky {
+    position: relative !important;
+    height: auto !important;
+    min-height: 80vh !important;
+    overflow: visible !important;
+  }
+
+  .scroll-sequence-canvas {
+    position: relative !important;
+    height: 70vh !important;
+  }
+}

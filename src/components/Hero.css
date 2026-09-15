@@ -1,0 +1,244 @@
+/* ============================================================================
+   HERO LAYERS & STANDALONE STYLING (Step 3)
+   ============================================================================ */
+
+.hero-standalone {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-top: 5rem;
+  overflow: hidden;
+  background-color: var(--color-bg-primary);
+}
+
+/* Background Layer */
+.hero-layer--background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-bg-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 75% 65% at 50% 52%,
+    hsla(38, 20%, 18%, 0.18) 0%,
+    transparent 75%
+  );
+}
+
+.hero-bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    hsla(220, 10%, 6%, 0.95) 0%,
+    hsla(220, 10%, 6%, 0.45) 30%,
+    hsla(220, 10%, 6%, 0.1) 60%,
+    hsla(220, 10%, 6%, 0.6) 100%
+  );
+}
+
+/* Vehicle Visual Layer */
+.hero-layer--vehicle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-vehicle-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-vehicle-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.hero-vehicle-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+  background: linear-gradient(
+    to top,
+    hsla(220, 10%, 6%, 0.95) 0%,
+    hsla(220, 10%, 6%, 0.6) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Content Layer */
+.hero-content-wrapper {
+  position: relative;
+  z-index: 5;
+  padding-bottom: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-title-group {
+  margin-bottom: var(--space-md);
+}
+
+.hero-series-tag {
+  display: inline-block;
+  margin-bottom: var(--space-sm);
+  color: var(--color-accent);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.hero-main-title {
+  margin: 0;
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 300;
+  font-family: var(--font-serif);
+}
+
+.hero-subtitle-layer {
+  max-width: 52ch;
+  margin-bottom: var(--space-lg);
+}
+
+.hero-subtitle-text {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 300;
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Decorative Technical Datum Line */
+.hero-tech-line-layer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-lg);
+  opacity: 0.6;
+}
+
+.hero-tech-line-rule {
+  width: 50px;
+  height: 1px;
+  background-color: var(--color-accent);
+}
+
+.hero-tech-line-text {
+  font-size: var(--text-xs);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+/* Technical Metadata */
+.hero-meta-layer {
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border-subtle);
+  max-width: 600px;
+}
+
+.hero-meta-grid {
+  display: flex;
+  gap: var(--space-2xl);
+}
+
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Scroll Indicator */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: var(--space-xl);
+  right: var(--container-pad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  opacity: 0.8;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.scroll-indicator-label {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+
+.scroll-indicator-track {
+  width: 1px;
+  height: 38px;
+  background-color: var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-indicator-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-color: var(--color-accent);
+  animation: scrollDown 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes scrollDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-standalone {
+    min-height: 85vh;
+  }
+
+  .hero-meta-grid {
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+  }
+
+  .hero-scroll-indicator {
+    display: none;
+  }
+}

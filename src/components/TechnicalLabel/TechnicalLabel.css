@@ -1,0 +1,153 @@
+/* ============================================================================
+   TECHNICAL LABEL EDITORIAL STYLING (Step 3)
+   ============================================================================ */
+
+.tech-labels-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.tech-labels-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tech-label-connector {
+  transition: opacity 250ms ease;
+}
+
+.tech-pin-core {
+  fill: var(--color-accent-red);
+}
+
+.tech-pin-ring {
+  fill: none;
+  stroke: var(--color-accent-red-muted);
+  stroke-width: 0.4;
+  opacity: 0.7;
+}
+
+.tech-rule-line {
+  fill: none;
+  stroke: hsla(220, 6%, 40%, 0.5);
+  stroke-width: 0.35;
+  stroke-dasharray: 2 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-labels-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tech-label-card {
+  position: absolute;
+  pointer-events: auto;
+  width: clamp(210px, 17vw, 260px);
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.75rem 0.9rem;
+  border-radius: 1px;
+  box-shadow: 0 4px 20px hsla(220, 10%, 2%, 0.7);
+  animation: techLabelFadeIn 250ms ease forwards;
+}
+
+@keyframes techLabelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tech-label-card:focus-visible {
+  outline: 1px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.tech-label-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.tech-label-code {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.tech-label-accent-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-accent-red);
+}
+
+.tech-label-heading {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0 0 0.15rem 0;
+}
+
+.tech-label-spec {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  margin: 0 0 0.35rem 0;
+  font-weight: 400;
+}
+
+.tech-label-desc {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .tech-labels-svg {
+    display: none;
+  }
+
+  .tech-labels-container {
+    position: absolute;
+    bottom: 4rem;
+    left: var(--container-pad);
+    right: var(--container-pad);
+    top: auto;
+    display: flex;
+    overflow-x: auto;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    scrollbar-width: none;
+  }
+
+  .tech-label-card {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    flex-shrink: 0;
+    width: 220px;
+  }
+}

@@ -1,0 +1,169 @@
+/* ============================================================================
+   TYPOGRAPHY — 2003 Honda Accord
+   ============================================================================
+   Systematic type styles. Serif for editorial headings, sans for interface.
+   ============================================================================ */
+
+/* --------------------------------------------------------------------------
+   EDITORIAL HEADINGS — Source Serif 4
+   -------------------------------------------------------------------------- */
+
+.type-hero {
+  font-family: var(--font-serif);
+  font-size: var(--text-hero);
+  font-weight: 300;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+}
+
+.type-heading-1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+}
+
+.type-heading-2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+}
+
+.type-heading-3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 400;
+  line-height: var(--leading-snug);
+  color: var(--color-text-primary);
+}
+
+
+/* --------------------------------------------------------------------------
+   INTERFACE TEXT — Inter
+   -------------------------------------------------------------------------- */
+
+.type-body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 300;
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+}
+
+.type-body-small {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+}
+
+.type-caption {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.type-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.type-stat-value {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.type-stat-unit {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* --------------------------------------------------------------------------
+   KINETIC TYPOGRAPHY & TEXT-SPLITTING UTILITIES (Step 11)
+   -------------------------------------------------------------------------- */
+
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.split-char {
+  display: inline-block;
+  will-change: transform, opacity;
+  transform-origin: 50% 100%;
+}
+
+.mask-wrapper {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.masked-inner {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Technical CAD Marker: Precise engineering documentation labels */
+.tech-cad-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.tech-cad-crosshair {
+  width: 7px;
+  height: 7px;
+  position: relative;
+  display: inline-block;
+}
+
+.tech-cad-crosshair::before,
+.tech-cad-crosshair::after {
+  content: '';
+  position: absolute;
+  background-color: var(--color-accent-red);
+}
+
+.tech-cad-crosshair::before {
+  top: 3px;
+  left: 0;
+  width: 7px;
+  height: 1px;
+}
+
+.tech-cad-crosshair::after {
+  top: 0;
+  left: 3px;
+  width: 1px;
+  height: 7px;
+}

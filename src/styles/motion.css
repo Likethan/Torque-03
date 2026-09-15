@@ -1,0 +1,304 @@
+/* ============================================================================
+   MOTION SYSTEM — 2003 Honda Accord
+   ============================================================================
+   Step 3: First Motion — CSS-only animation primitives.
+
+   This file provides reusable motion utility classes that can be composed
+   onto any element. All timing and magnitude values reference the centralized
+   tokens in variables.css.
+
+   ARCHITECTURE DECISION:
+   Motion behavior is declared in CSS, not React.
+   React components handle structure and data.
+   CSS handles visual presentation and interaction feedback.
+   This separation keeps motion concerns orthogonal to component logic.
+
+   COMPOSITING PERFORMANCE:
+   We prefer animating `transform` and `opacity` because these properties
+   can be handled entirely by the GPU compositor thread, avoiding the
+   browser's layout and paint phases. Animating layout properties like
+   width, height, margin, or top triggers expensive reflow and repaint
+   on every frame, which causes visible jank on lower-end devices.
+   ============================================================================ */
+
+
+/* --------------------------------------------------------------------------
+   MEDIA HOVER — Hero vehicle / editorial imagery
+   --------------------------------------------------------------------------
+   Applied to image containers that should respond to hover with a
+   subtle scale increase. The transform-origin is set to center so the
+   image scales uniformly from its natural focal point.
+
+   `will-change: transform` hints the browser to promote this element
+   to its own compositor layer ahead of time, ensuring the first frame
+   of the transition is smooth.
+   -------------------------------------------------------------------------- */
+
+.motion-media-hover {
+  overflow: hidden;
+}
+
+.motion-media-hover > img,
+.motion-media-hover > picture > img {
+  transition: transform var(--motion-duration-slow) var(--motion-ease-emphasis);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.motion-media-hover:hover > img,
+.motion-media-hover:hover > picture > img {
+  transform: scale(var(--motion-hover-scale));
+}
+
+
+/* --------------------------------------------------------------------------
+   INTERACTIVE ELEMENT — General-purpose hover/focus feedback
+   --------------------------------------------------------------------------
+   For navigation links, labels, and other interactive text elements.
+   Uses opacity transitions for a restrained "acknowledgment" effect.
+   -------------------------------------------------------------------------- */
+
+.motion-interactive {
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease-standard),
+    color var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.motion-interactive:hover {
+  opacity: var(--motion-hover-opacity);
+}
+
+/* Keyboard focus — must remain visible and distinct for accessibility.
+   We use a custom outline that matches the editorial palette. */
+.motion-interactive:focus-visible {
+  outline: 1px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+
+/* --------------------------------------------------------------------------
+   NAV LINK — Underline-based hover for navigation items
+   --------------------------------------------------------------------------
+   Uses a pseudo-element for the underline so we can control its origin
+   and scale via transform, avoiding any layout shift.
+
+   transform-origin: left center — the underline grows from left to right,
+   which reads naturally in LTR layouts and provides directional intent.
+   -------------------------------------------------------------------------- */
+
+.motion-nav-link {
+  position: relative;
+  display: inline-block;
+  transition:
+    color var(--motion-duration-standard) var(--motion-ease-standard);
+}
+
+.motion-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--motion-duration-standard) var(--motion-ease-emphasis);
+}
+
+.motion-nav-link:hover {
+  color: var(--color-text-primary);
+}
+
+.motion-nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.motion-nav-link:focus-visible {
+  outline: 1px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+
+/* --------------------------------------------------------------------------
+   TECHNICAL LABEL — Subtle emphasis for spec labels and data tags
+   --------------------------------------------------------------------------
+   On hover: slight upward lift via translateY and color shift.
+   On focus: clear accessible outline.
+
+   translateY uses var(--motion-hover-lift) which is -2px — just enough
+   to create a tactile sense of response without disrupting reading flow.
+   -------------------------------------------------------------------------- */
+
+.motion-label {
+  display: inline-block;
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-precise),
+    color var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.motion-label:hover {
+  transform: translateY(var(--motion-hover-lift));
+  color: var(--color-text-primary);
+}
+
+.motion-label:focus-visible {
+  outline: 1px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+
+/* --------------------------------------------------------------------------
+   BUTTON — Restrained interaction for primary/secondary actions
+   --------------------------------------------------------------------------
+   Combines border-color, background, and slight scale feedback.
+   Active state uses a fractional scale-down to simulate tactile press.
+   -------------------------------------------------------------------------- */
+
+.motion-button {
+  transition:
+    border-color var(--motion-duration-standard) var(--motion-ease-standard),
+    background-color var(--motion-duration-standard) var(--motion-ease-standard),
+    color var(--motion-duration-standard) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-precise);
+}
+
+.motion-button:active {
+  transform: scale(var(--motion-active-scale));
+}
+
+.motion-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+
+/* --------------------------------------------------------------------------
+   CARD — Subtle lift on hover for card-style containers
+   -------------------------------------------------------------------------- */
+
+.motion-card {
+  transition:
+    transform var(--motion-duration-standard) var(--motion-ease-emphasis),
+    border-color var(--motion-duration-standard) var(--motion-ease-standard);
+}
+
+.motion-card:hover {
+  transform: translateY(var(--motion-hover-lift));
+  border-color: var(--color-border);
+}
+
+.motion-card:focus-within {
+  border-color: var(--color-focus);
+}
+
+
+/* ============================================================================
+   SCROLL-DRIVEN MOTION PRIMITIVES (Step 3)
+   ============================================================================
+   Establishes the foundation for scroll-linked visual changes without external
+   libraries. Properties are driven by CSS variables set via passive scroll
+   listener throttled with requestAnimationFrame.
+
+   COMPOSITING NOTE:
+   Only `transform` and `opacity` are altered during scroll progression.
+   Elements are promoted to compositor layers (`will-change`) for 60fps rendering.
+   ============================================================================ */
+
+.motion-scroll-stage {
+  position: relative;
+  width: 100%;
+  height: var(--stage-height-desktop);
+}
+
+@media (max-width: 1024px) {
+  .motion-scroll-stage {
+    height: var(--stage-height-tablet);
+  }
+}
+
+@media (max-width: 768px) {
+  .motion-scroll-stage {
+    height: var(--stage-height-mobile);
+  }
+}
+
+.motion-sticky-viewport {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.motion-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+
+/* ============================================================================
+   REDUCED MOTION — Accessibility
+   ============================================================================
+   When the user has enabled "Reduce motion" in their OS settings,
+   we disable non-essential transitions and collapse scroll-pinned stages:
+   - All content and layout remain accessible in static natural document flow
+   - Focus indicators remain visible and distinct
+   - Non-motion visual feedback (color, borders) remains active
+   - Pinned 300vh scroll tracks collapse to height: auto
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-media-hover > img,
+  .motion-media-hover > picture > img {
+    transition-duration: 0.01ms;
+    will-change: auto;
+  }
+
+  .motion-media-hover:hover > img,
+  .motion-media-hover:hover > picture > img {
+    transform: none;
+  }
+
+  .motion-interactive,
+  .motion-nav-link,
+  .motion-nav-link::after,
+  .motion-label,
+  .motion-button,
+  .motion-card {
+    transition-duration: 0.01ms;
+  }
+
+  .motion-label:hover {
+    transform: none;
+  }
+
+  .motion-card:hover {
+    transform: none;
+  }
+
+  /* Step 3: Collapse scroll stage into accessible static flow */
+  .motion-scroll-stage {
+    height: auto !important;
+  }
+
+  .motion-sticky-viewport {
+    position: relative !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  .motion-layer {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+}
+

@@ -1,0 +1,233 @@
+/* ============================================================================
+   THREE ENGINEERING STAGE (Step 15 — 3D Choreography)
+   ============================================================================ */
+
+.three-stage-section {
+  position: relative;
+  background-color: var(--color-bg-primary);
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.three-stage-pin-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.three-stage-sticky-content {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-2xl);
+  box-sizing: border-box;
+}
+
+.three-stage__header {
+  margin-bottom: var(--space-xl);
+}
+
+.three-stage__label {
+  display: inline-block;
+  margin-bottom: var(--space-xs);
+  color: var(--color-accent-red);
+}
+
+.three-stage__title {
+  margin-bottom: var(--space-xs);
+}
+
+.three-stage__intro {
+  max-width: 68ch;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  font-size: var(--text-sm);
+}
+
+.three-stage__grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: var(--space-xl);
+  align-items: stretch;
+}
+
+.three-stage__viewport-container {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  height: 560px;
+}
+
+/* Sidebar with Technical Specifications & Waypoint Sequence */
+.three-stage__sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-md);
+  background: rgba(18, 21, 26, 0.55);
+  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-lg);
+  border-radius: 2px;
+  backdrop-filter: blur(8px);
+}
+
+.three-stage__step-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.three-stage__step-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--color-accent-red);
+  text-transform: uppercase;
+}
+
+.three-stage__step-heading {
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.three-stage__step-desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Waypoint Navigator Buttons */
+.three-stage__waypoint-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-md);
+}
+
+.three-stage__nav-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.three-stage__waypoint-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.three-stage__waypoint-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.6rem;
+  background: rgba(14, 17, 21, 0.6);
+  border: 1px solid var(--color-hud-border);
+  border-radius: 2px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+  text-align: left;
+}
+
+.three-stage__waypoint-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text-primary);
+  background: rgba(26, 31, 38, 0.8);
+}
+
+.three-stage__waypoint-btn--active {
+  border-color: var(--color-accent-red);
+  background: rgba(200, 16, 46, 0.12);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.three-stage__waypoint-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+  opacity: 0.4;
+}
+
+.three-stage__waypoint-btn--active .three-stage__waypoint-indicator {
+  background: var(--color-accent-red);
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(200, 16, 46, 0.8);
+}
+
+/* Scrub Progress Gauges */
+.three-stage__scrub-guide {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-sm);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+}
+
+.three-stage__scrub-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+}
+
+.three-stage__scrub-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.three-stage__scrub-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--color-hud-border);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.three-stage__scrub-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--color-accent-red);
+  transition: width 0.08s linear;
+}
+
+.three-stage__scrub-percent {
+  font-weight: 600;
+  color: var(--color-accent-red);
+  min-width: 36px;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .three-stage__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+  .three-stage__viewport-container {
+    height: 440px;
+    min-height: 400px;
+  }
+  .three-stage-sticky-content {
+    min-height: auto;
+  }
+}

@@ -1,0 +1,308 @@
+/* ============================================================================
+   FORM SECTION & TECHNICAL ANNOTATIONS STYLING (Step 3)
+   ============================================================================ */
+
+.form-section {
+  position: relative;
+  background-color: var(--color-bg-primary);
+  padding: var(--space-3xl) 0;
+  overflow: hidden;
+}
+
+/* Form Header */
+.form-header-group {
+  max-width: 680px;
+  margin-bottom: var(--space-2xl);
+}
+
+.form-eyebrow {
+  margin-bottom: var(--space-sm);
+  color: var(--color-accent);
+}
+
+.form-title {
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
+  font-weight: 300;
+}
+
+.form-divider {
+  width: 60px;
+  height: 1px;
+  background-color: var(--color-accent-muted);
+  border: none;
+  margin: var(--space-md) 0;
+}
+
+.form-intro-text {
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  font-weight: 300;
+}
+
+/* Fallback Container (for standalone render) */
+.form-visual-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--space-2xl);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.form-fallback-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+}
+
+/* --------------------------------------------------------------------------
+   TECHNICAL ANNOTATIONS LAYER
+   -------------------------------------------------------------------------- */
+
+.tech-annotations-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* SVG Line Connectors */
+.tech-annotations-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.annotation-connector {
+  transition: opacity 300ms var(--motion-ease-emphasis);
+}
+
+.annotation-pin-dot {
+  fill: var(--annotation-dot);
+  transition: fill 250ms ease, r 250ms ease;
+}
+
+.annotation-pin-pulse {
+  fill: none;
+  stroke: var(--annotation-dot-glow);
+  stroke-width: 0.5;
+  opacity: 0.8;
+}
+
+.annotation-line {
+  fill: none;
+  stroke: var(--annotation-line);
+  stroke-width: 0.35;
+  stroke-dasharray: 1.5 1;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 250ms ease, stroke-width 250ms ease;
+}
+
+.annotation-connector--active .annotation-pin-dot {
+  fill: var(--color-accent);
+}
+
+.annotation-connector--active .annotation-line {
+  stroke: var(--annotation-line-active);
+  stroke-width: 0.5;
+  stroke-dasharray: none;
+}
+
+/* Annotation Cards */
+.tech-annotations-cards {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tech-annotation-card {
+  position: absolute;
+  pointer-events: auto;
+  width: clamp(200px, 18vw, 260px);
+  background-color: var(--annotation-bg);
+  border: 1px solid var(--annotation-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 2px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 350ms var(--motion-ease-emphasis),
+    transform 350ms var(--motion-ease-emphasis),
+    border-color 250ms ease;
+  box-shadow: 0 4px 20px hsla(220, 10%, 2%, 0.5);
+}
+
+.tech-annotation-card--visible {
+  opacity: 0.65;
+  transform: translateY(0);
+}
+
+.tech-annotation-card--active {
+  opacity: 1;
+  transform: translateY(0);
+  border-color: var(--color-accent-muted);
+  box-shadow: 0 4px 24px hsla(38, 30%, 20%, 0.25);
+}
+
+.tech-annotation-card:focus-visible {
+  outline: 1px solid var(--color-focus);
+  outline-offset: 3px;
+  opacity: 1;
+}
+
+.tech-annotation-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: 2px;
+}
+
+.tech-annotation-index {
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-accent);
+  font-weight: 600;
+  border: 1px solid var(--color-accent-subtle);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.tech-annotation-title {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.tech-annotation-tag {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  margin: 2px 0 4px 0;
+  font-weight: 400;
+}
+
+.tech-annotation-detail {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* --------------------------------------------------------------------------
+   FORM DIMENSIONAL SPEC STRIP
+   -------------------------------------------------------------------------- */
+
+.form-dimensions-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+  padding: var(--space-xl) 0;
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-top: var(--space-xl);
+}
+
+.form-dim-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.form-dim-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.form-dim-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.form-dim-val {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.form-dim-unit {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+}
+
+.form-dim-metric {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE ADJUSTMENTS
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .tech-annotation-card {
+    width: clamp(180px, 24vw, 220px);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .tech-annotation-detail {
+    font-size: 0.6875rem;
+  }
+
+  .form-dimensions-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .tech-annotations-svg {
+    display: none;
+  }
+
+  .tech-annotations-cards {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--container-pad);
+  }
+
+  .tech-annotation-card {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100%;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .form-dimensions-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

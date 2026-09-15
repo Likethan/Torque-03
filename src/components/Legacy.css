@@ -1,0 +1,68 @@
+/* ============================================================================
+   LEGACY / HERITAGE SECTION
+   ============================================================================ */
+
+.legacy {
+  background-color: var(--color-bg-primary);
+}
+
+.legacy__content {
+  max-width: 680px;
+}
+
+.legacy__label {
+  margin-bottom: var(--space-md);
+}
+
+.legacy__title {
+  margin-bottom: var(--space-lg);
+}
+
+.legacy__text {
+  margin-bottom: var(--space-lg);
+}
+
+.legacy__text + .legacy__text {
+  margin-bottom: 0;
+}
+
+.legacy__cta {
+  margin-top: var(--space-2xl);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  /* motion-button class handles transition */
+}
+
+.btn:hover {
+  border-color: var(--color-accent-muted);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-elevated);
+}
+
+.btn__arrow {
+  display: inline-block;
+  transition: transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.btn:hover .btn__arrow {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover .btn__arrow {
+    transform: none;
+  }
+}

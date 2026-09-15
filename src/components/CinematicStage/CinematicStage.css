@@ -1,0 +1,999 @@
+/* ============================================================================
+   CINEMATIC STAGE STYLING (Step 3 - Scroll-Scrubbed Experience)
+   ============================================================================ */
+
+.cinematic-stage-root {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-bg-primary);
+  overflow: clip;
+}
+
+.cinema-viewport-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   TOP CINEMA HUD
+   -------------------------------------------------------------------------- */
+
+.cinema-top-hud {
+  position: absolute;
+  top: 4.8rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--container-pad);
+  z-index: 20;
+}
+
+.cinema-hud-left,
+.cinema-hud-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.35rem 0.75rem;
+  border-radius: 1px;
+}
+
+.cinema-hud-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-red);
+  box-shadow: 0 0 6px var(--color-accent-red-muted);
+}
+
+.cinema-hud-tag,
+.cinema-hud-phase,
+.cinema-hud-timecode,
+.cinema-hud-frame {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+}
+
+.cinema-hud-tag {
+  color: var(--color-text-secondary);
+}
+
+.cinema-hud-phase {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.cinema-hud-sep {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.cinema-hud-timecode {
+  color: var(--color-hud-active);
+  font-weight: 600;
+}
+
+.cinema-hud-frame {
+  color: var(--color-text-tertiary);
+}
+
+/* --------------------------------------------------------------------------
+   TIMELINE SCRUBBER RAIL
+   -------------------------------------------------------------------------- */
+
+.cinema-playhead-rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-border-subtle);
+  z-index: 30;
+}
+
+.cinema-playhead-fill {
+  height: 100%;
+  background-color: var(--color-accent-red);
+  transition: width 40ms linear;
+  box-shadow: 0 0 8px var(--color-accent-red);
+}
+
+/* --------------------------------------------------------------------------
+   01 — ARRIVAL TYPOGRAPHY LAYER
+   -------------------------------------------------------------------------- */
+
+.cinema-layer-arrival {
+  position: absolute;
+  bottom: 5.5rem;
+  left: 0;
+  right: 0;
+  z-index: 12;
+  will-change: transform, opacity;
+}
+
+.cinema-arrival-header {
+  max-width: 580px;
+}
+
+.cinema-model-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  color: var(--color-accent-red);
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+}
+
+.cinema-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3.2rem, 8vw, 6.5rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+  margin: 0.2rem 0;
+}
+
+.cinema-hero-series {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0;
+}
+
+.cinema-hairline-rule {
+  width: 48px;
+  height: 1px;
+  background-color: var(--color-accent-red);
+  border: none;
+  margin: var(--space-md) 0;
+}
+
+.cinema-hero-lead {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  font-weight: 300;
+  max-width: 46ch;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   02 — REVEAL METADATA LAYER
+   -------------------------------------------------------------------------- */
+
+.cinema-layer-reveal {
+  position: absolute;
+  top: 8rem;
+  left: 0;
+  right: 0;
+  z-index: 13;
+  will-change: opacity;
+}
+
+.cinema-reveal-badge {
+  max-width: 450px;
+  margin-bottom: var(--space-md);
+  background-color: var(--color-hud-bg);
+  border-left: 2px solid var(--color-accent-red);
+  padding: var(--space-sm) var(--space-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cinema-reveal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-widest);
+  color: var(--color-accent-red);
+  text-transform: uppercase;
+}
+
+.cinema-reveal-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0.2rem 0 0 0;
+}
+
+.cinema-specs-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  max-width: 820px;
+  margin-top: var(--space-md);
+}
+
+.cinema-spec-cell {
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  padding: var(--space-sm) var(--space-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+}
+
+.cinema-spec-num {
+  font-family: var(--font-sans);
+  font-size: var(--text-2xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.cinema-spec-unit {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-accent);
+  margin-top: 2px;
+}
+
+.cinema-spec-lbl {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  color: var(--color-text-tertiary);
+  margin-top: 0.35rem;
+  line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   04 & 05 — FORM & TRANSITION LAYER (Chapter 02)
+   -------------------------------------------------------------------------- */
+
+.cinema-layer-form {
+  position: absolute;
+  top: 8rem;
+  left: 0;
+  right: 0;
+  z-index: 14;
+  will-change: opacity, transform;
+}
+
+.cinema-form-header {
+  max-width: 580px;
+  background-color: var(--color-hud-bg);
+  border-left: 2px solid var(--color-accent-red);
+  padding: var(--space-md) var(--space-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cinema-form-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0.3rem 0;
+}
+
+.cinema-form-hairline {
+  width: 44px;
+  height: 1px;
+  background-color: var(--color-accent-red);
+  border: none;
+  margin: var(--space-sm) 0;
+}
+
+.cinema-form-lead {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+.cinema-form-specs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  max-width: 580px;
+}
+
+.cinema-form-spec-cell {
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  padding: 0.4rem 0.55rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+}
+
+.cinema-form-spec-val {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+}
+
+.cinema-form-spec-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   06 — MONOCOQUE CHASSIS LAYER (Chapter 03 - Architecture)
+   -------------------------------------------------------------------------- */
+
+.cinema-layer-chassis {
+  position: absolute;
+  top: 8rem;
+  left: 0;
+  right: 0;
+  z-index: 15;
+  will-change: opacity, transform;
+}
+
+.cinema-chassis-header {
+  max-width: 620px;
+  background-color: var(--color-hud-bg);
+  border-left: 2px solid var(--color-accent-red);
+  padding: var(--space-md) var(--space-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cinema-chassis-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0.3rem 0;
+}
+
+.cinema-chassis-hairline {
+  width: 44px;
+  height: 1px;
+  background-color: var(--color-accent-red);
+  border: none;
+  margin: var(--space-sm) 0;
+}
+
+.cinema-chassis-lead {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+.cinema-chassis-specs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  max-width: 620px;
+}
+
+/* --------------------------------------------------------------------------
+   07 — POWERTRAIN MECHANICAL HEART LAYER (Chapter 04 - Powertrain)
+   -------------------------------------------------------------------------- */
+
+.cinema-layer-powertrain {
+  position: absolute;
+  top: 8rem;
+  left: 0;
+  right: 0;
+  z-index: 16;
+  will-change: opacity, transform;
+}
+
+.cinema-powertrain-header {
+  max-width: 640px;
+  background-color: var(--color-hud-bg);
+  border-left: 2px solid var(--color-accent-red);
+  padding: var(--space-md) var(--space-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cinema-powertrain-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0.3rem 0;
+}
+
+.cinema-powertrain-hairline {
+  width: 44px;
+  height: 1px;
+  background-color: var(--color-accent-red);
+  border: none;
+  margin: var(--space-sm) 0;
+}
+
+.cinema-powertrain-lead {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+.cinema-powertrain-specs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  max-width: 640px;
+}
+
+/* --------------------------------------------------------------------------
+   08 — CONCLUSION & SYNTHESIS LAYER (Chapter 05 - Synthesis)
+   -------------------------------------------------------------------------- */
+
+.cinema-layer-conclusion {
+  position: absolute;
+  top: 8rem;
+  left: 0;
+  right: 0;
+  z-index: 17;
+  will-change: opacity, transform;
+}
+
+.cinema-conclusion-header {
+  max-width: 620px;
+  background-color: var(--color-hud-bg);
+  border-left: 2px solid var(--color-accent-red);
+  padding: var(--space-md) var(--space-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cinema-conclusion-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin: 0.3rem 0;
+}
+
+.cinema-conclusion-hairline {
+  width: 44px;
+  height: 1px;
+  background-color: var(--color-accent-red);
+  border: none;
+  margin: var(--space-sm) 0;
+}
+
+.cinema-conclusion-lead {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 300;
+}
+
+.cinema-conclusion-specs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  max-width: 620px;
+}
+
+.cinema-conclusion-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   LAYERED PARALLAX ARCHITECTURE & CAMERA RIG (Step 10)
+   -------------------------------------------------------------------------- */
+
+/* Depth Layer 1: Background CAD Coordinate Grid (rate: 0.02) */
+.cinema-parallax-bg-grid {
+  position: absolute;
+  inset: -10% -5%;
+  width: 110%;
+  height: 120%;
+  pointer-events: none;
+  z-index: 1;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 40px 40px, 80px 80px, 80px 80px;
+  will-change: transform;
+  opacity: 0.65;
+}
+
+/* Depth Layer 2: Camera Rig (Vehicle Canvas Stage, rate: 0.06 - 0.08, scale 0.92 -> 1.08) */
+.cinema-camera-rig {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* Depth Layer 3: Secondary Technical Annotations (rate: 0.10) */
+.cinema-parallax-annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+  will-change: transform;
+}
+
+/* Depth Layer 4: Foreground Typography & Telemetry (rate: 0.14) */
+.cinema-parallax-foreground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   BOTTOM CINEMA FOOTER
+   -------------------------------------------------------------------------- */
+
+.cinema-bottom-hud {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--container-pad);
+  z-index: 20;
+}
+
+.cinema-scrub-cue {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.35rem 0.75rem;
+  border-radius: 1px;
+}
+
+.cinema-scrub-arrow {
+  color: var(--color-accent-red);
+  font-size: 0.875rem;
+  animation: scrubPulse 1.8s ease infinite;
+}
+
+@keyframes scrubPulse {
+  0%, 100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+.cinema-scrub-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.cinema-jump-anchors {
+  pointer-events: auto;
+}
+
+.cinema-anchor-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  padding: 0.35rem 0.75rem;
+  border-radius: 1px;
+  cursor: pointer;
+  will-change: transform, border-color, background-color;
+}
+
+.cinema-anchor-arrow {
+  display: inline-block;
+  will-change: transform;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.cinema-debug-replay-btn {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-accent);
+  background: hsla(38, 92%, 50%, 0.12);
+  border: 1px solid hsla(38, 92%, 50%, 0.35);
+  padding: 0.25rem 0.5rem;
+  border-radius: 1px;
+  cursor: pointer;
+  margin-top: 0.45rem;
+  width: 100%;
+  text-align: center;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.cinema-debug-replay-btn:hover {
+  background: hsla(38, 92%, 50%, 0.25);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   DEVELOPMENT DEBUG OVERLAY (Section 24)
+   -------------------------------------------------------------------------- */
+
+.cinema-debug-hud {
+  position: absolute;
+  bottom: 4.5rem;
+  left: var(--container-pad);
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.6rem 0.85rem;
+  border-radius: 2px;
+  z-index: 25;
+  pointer-events: auto;
+  box-shadow: 0 4px 20px hsla(220, 10%, 2%, 0.8);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  min-width: 260px;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+
+.cinema-debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-hud-border);
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+
+.cinema-debug-title {
+  color: var(--color-accent-red);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  font-size: 0.625rem;
+}
+
+.cinema-debug-close {
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.cinema-debug-close:hover {
+  color: var(--color-text-primary);
+}
+
+.cinema-debug-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  align-items: baseline;
+}
+
+.cinema-debug-lbl {
+  color: var(--color-text-tertiary);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+}
+
+.cinema-debug-val {
+  color: var(--color-hud-active);
+  font-weight: 500;
+  text-align: right;
+}
+
+.cinema-debug-val--status {
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   STEP 7: GSAP TIMELINE PLAYBACK CONTROLLER
+   -------------------------------------------------------------------------- */
+
+.cinema-tl-ctrl-group {
+  margin-top: 0.5rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--color-hud-border);
+}
+
+.cinema-tl-ctrl-title {
+  font-size: 0.5625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cinema-tl-scene-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.cinema-tl-tab-btn {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  background: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  color: var(--color-text-tertiary);
+  padding: 0.2rem 0.35rem;
+  border-radius: 1px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.cinema-tl-tab-btn--active {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-red);
+  background: hsla(356, 85%, 45%, 0.18);
+  font-weight: 600;
+}
+
+.cinema-tl-telemetry-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.5625rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.cinema-tl-telemetry-badge {
+  color: var(--color-hud-active);
+  font-weight: 600;
+}
+
+.cinema-tl-btn-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.cinema-tl-btn {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.05em;
+  background: hsla(220, 10%, 14%, 0.9);
+  border: 1px solid var(--color-hud-border);
+  color: var(--color-text-secondary);
+  padding: 0.25rem 0.15rem;
+  text-align: center;
+  border-radius: 1px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.cinema-tl-btn:hover {
+  border-color: var(--color-accent-red);
+  color: var(--color-text-primary);
+  background: hsla(356, 85%, 45%, 0.25);
+}
+
+.cinema-tl-scrub-slider {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: var(--color-border-subtle);
+  outline: none;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 0.2rem;
+}
+
+.cinema-tl-scrub-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-accent-red);
+  cursor: pointer;
+  box-shadow: 0 0 6px var(--color-accent-red);
+}
+
+.cinema-debug-hint {
+  margin-top: 0.4rem;
+  font-size: 0.5625rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  border-top: 1px dashed var(--color-hud-border);
+  padding-top: 0.25rem;
+}
+
+.cinema-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  pointer-events: auto;
+}
+
+.cinema-debug-toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-tertiary);
+  background-color: var(--color-hud-bg);
+  border: 1px solid var(--color-hud-border);
+  padding: 0.35rem 0.6rem;
+  border-radius: 1px;
+  cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.cinema-debug-toggle-btn:hover {
+  color: var(--color-accent-red);
+  border-color: var(--color-accent-red-muted);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE ADJUSTMENTS
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .cinema-specs-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .cinema-top-hud {
+    top: 4.2rem;
+  }
+
+  .cinema-hud-tag,
+  .cinema-hud-sep {
+    display: none;
+  }
+
+  .cinema-layer-reveal {
+    top: 6.8rem;
+  }
+
+  .cinema-reveal-badge {
+    padding: var(--space-xs) var(--space-sm);
+    margin-bottom: var(--space-xs);
+    max-width: 320px;
+  }
+
+  .cinema-reveal-title {
+    font-size: var(--text-base);
+  }
+
+  .cinema-hero-title {
+    font-size: clamp(2.4rem, 11vw, 3.8rem);
+  }
+
+  .cinema-hero-lead {
+    font-size: var(--text-sm);
+    line-height: 1.45;
+    max-width: 36ch;
+  }
+
+  .cinema-layer-arrival {
+    bottom: 3.8rem;
+  }
+
+  .cinema-specs-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    max-width: 380px;
+    margin-top: var(--space-xs);
+  }
+
+  .cinema-spec-cell {
+    padding: 0.35rem 0.6rem;
+  }
+
+  .cinema-spec-num {
+    font-size: 1.25rem;
+  }
+
+  .cinema-spec-lbl {
+    font-size: 0.625rem;
+    margin-top: 0.15rem;
+  }
+
+  .cinema-bottom-hud {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION OVERRIDE
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cinema-viewport-overlay {
+    position: relative !important;
+    inset: auto !important;
+  }
+
+  .cinema-layer-arrival,
+  .cinema-layer-reveal,
+  .cinema-layer-form,
+  .cinema-layer-chassis,
+  .cinema-layer-powertrain,
+  .cinema-layer-conclusion {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    margin-bottom: var(--space-2xl) !important;
+  }
+
+  .cinema-parallax-bg-grid,
+  .cinema-camera-rig,
+  .cinema-parallax-annotations,
+  .cinema-parallax-foreground {
+    transform: none !important;
+  }
+
+  .cinema-playhead-rail,
+  .cinema-scrub-arrow {
+    display: none !important;
+  }
+}
