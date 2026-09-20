@@ -20,13 +20,358 @@
   box-sizing: border-box;
 }
 
+/* ============================================================================
+   STEP 1 — CINEMATIC AUTOMOTIVE HERO INTRO STYLING
+   ============================================================================ */
+
+/* Phase 01: Deep Obsidian Blackout Veil */
+.cinema-blackout-veil {
+  position: absolute;
+  inset: 0;
+  background-color: hsl(220, 10%, 4%);
+  z-index: 8;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+/* Phase 01: Ambient Studio Atmosphere */
+.cinema-studio-atmosphere {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 55%, hsla(38, 25%, 35%, 0.18), transparent 72%);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Phase 02: Perimeter Editorial Technical Signals */
+.cinema-tech-signals-perimeter {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.cinema-tech-signal {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: hsl(40, 8%, 78%);
+  text-transform: uppercase;
+  opacity: 0;
+  white-space: nowrap;
+  user-select: none;
+  will-change: transform, opacity;
+  font-weight: 500;
+}
+
+/* Hide top signals to avoid any collision with fixed Header and Cinema HUD */
+.cinema-tech-signal--tl,
+.cinema-tech-signal--tr {
+  display: none !important;
+}
+
+.cinema-tech-signal--bl {
+  bottom: 2.4rem;
+  left: var(--container-pad);
+}
+
+.cinema-tech-signal--br {
+  bottom: 2.4rem;
+  right: var(--container-pad);
+}
+
+/* Layer 2: Camera Viewport Rig */
+.cinema-camera-rig {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 4;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Phase 03, 04, 05: Cinematic Automotive Hero Stage (The Protagonist) */
+.cinema-hero-vehicle-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 4;
+  transform-style: preserve-3d;
+  transform-origin: 50% 55%;
+  will-change: transform, opacity;
+}
+
+.cinema-vehicle-mask-container {
+  position: relative;
+  width: min(86vw, 1140px);
+  aspect-ratio: 16 / 9;
+  max-height: 68vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  /* Seamless feathering dissolves rectangular photo borders into the obsidian studio */
+  -webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 72%, rgba(0, 0, 0, 0.6) 88%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 72%, rgba(0, 0, 0, 0.6) 88%, transparent 100%);
+}
+
+.cinema-vehicle-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  filter: drop-shadow(0 25px 50px hsla(220, 15%, 2%, 0.92)) contrast(1.02) brightness(1.01);
+  user-select: none;
+}
+
+/* Phase 03: Controlled Studio Lighting Sweep */
+.cinema-light-sweep {
+  position: absolute;
+  inset: -60%;
+  width: 220%;
+  height: 220%;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    hsla(40, 20%, 92%, 0.22) 47%,
+    hsla(38, 40%, 82%, 0.6) 50%,
+    hsla(40, 20%, 92%, 0.22) 53%,
+    transparent 65%
+  );
+  transform: rotate(-10deg);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Phase 05: Automotive Headlight & Grille Specular Accents (Anti-Bloom Studio Realism) */
+.cinema-headlight-specular {
+  position: absolute;
+  top: 47.5%;
+  left: 26.5%;
+  width: 140px;
+  height: 44px;
+  /* Controlled Fresnel roll-off preserving the physical reflector housing and fluted optic lens */
+  background: radial-gradient(
+    ellipse 65% 55% at 50% 50%,
+    hsla(42, 50%, 94%, 0.78) 0%,
+    hsla(38, 35%, 75%, 0.38) 42%,
+    hsla(36, 25%, 55%, 0.12) 68%,
+    transparent 85%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(2.5px);
+  will-change: transform, opacity;
+}
+
+.cinema-grille-specular {
+  position: absolute;
+  top: 52%;
+  left: 16%;
+  width: 105px;
+  height: 30px;
+  background: radial-gradient(
+    ellipse 60% 45% at 45% 50%,
+    hsla(355, 65%, 50%, 0.28) 0%,
+    hsla(40, 18%, 85%, 0.36) 35%,
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(2.5px);
+  will-change: transform, opacity;
+}
+
+/* Step 7: Anchored Studio Ground Contact Shadow (Multi-Tiered Physical Grounding) */
+.cinema-vehicle-ground-shadow {
+  position: absolute;
+  bottom: 11.5%;
+  width: 82%;
+  height: 52px;
+  /* Multi-stop layered occlusion: tight tire contact core + diffuse floor dispersion */
+  background:
+    radial-gradient(ellipse 75% 28% at 50% 50%, hsla(220, 18%, 2%, 0.96) 0%, hsla(220, 14%, 3%, 0.65) 45%, transparent 72%),
+    radial-gradient(ellipse 95% 45% at 50% 60%, hsla(220, 12%, 4%, 0.45) 0%, transparent 80%);
+  filter: blur(10px);
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+/* Phase 06: Editorial Typography Hierarchy */
+.cinema-title-year-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.cinema-title-year {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--color-accent);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Phase 08: Minimal Editorial Scroll Invitation */
+.cinema-scroll-invite {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.cinema-scroll-invite-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cinema-scroll-invite-line {
+  width: 1px;
+  height: 36px;
+  background: hsla(220, 6%, 22%, 0.85);
+  position: relative;
+  overflow: hidden;
+}
+
+.cinema-scroll-invite-runner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 45%;
+  background: linear-gradient(to bottom, transparent, var(--color-accent), transparent);
+  animation: cinemaScrollRunner 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes cinemaScrollRunner {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(220%); }
+}
+
+/* ============================================================================
+   STEP 2 — CINEMATIC CAMERA SYSTEM & PARALLAX DEPTH LAYERS
+   ============================================================================ */
+
+/* Layer 1: Background CAD Coordinate Drafting Grid & Studio Vignette */
+.cinema-parallax-bg-grid {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  background-image: 
+    radial-gradient(ellipse 70% 60% at 50% 50%, transparent 35%, hsla(220, 12%, 4%, 0.95) 100%),
+    linear-gradient(to right, hsla(220, 10%, 65%, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, hsla(220, 10%, 65%, 0.035) 1px, transparent 1px);
+  background-size: 100% 100%, 120px 120px, 120px 120px;
+  background-position: center center;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+/* Layer 1.5: Horizontal Architectural Watermark Ribbon (Controlled Drift) */
+.cinema-arch-watermark {
+  position: absolute;
+  top: 36%;
+  left: -5%;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.022;
+  filter: blur(0.5px);
+  user-select: none;
+  will-change: transform;
+}
+
+.cinema-watermark-track {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 7.5vw, 6.5rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+/* Layer 2: Virtual Camera Rig Viewport */
+.cinema-camera-rig {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 4;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* Layer 3: Secondary Technical Annotations */
+.cinema-parallax-annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 18;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* Layer 4: Foreground Typography & Chapter Layers */
+.cinema-parallax-foreground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  will-change: transform;
+  transform-origin: 50% 25%;
+}
+
 /* --------------------------------------------------------------------------
    TOP CINEMA HUD
    -------------------------------------------------------------------------- */
 
 .cinema-top-hud {
   position: absolute;
-  top: 4.8rem;
+  top: 5.6rem;
   left: 0;
   right: 0;
   display: flex;
@@ -41,12 +386,13 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background-color: var(--color-hud-bg);
-  border: 1px solid var(--color-hud-border);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 0.35rem 0.75rem;
+  background-color: hsla(220, 12%, 7%, 0.85);
+  border: 1px solid hsla(220, 10%, 25%, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.38rem 0.85rem;
   border-radius: 1px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .cinema-hud-live-dot {
@@ -182,12 +528,7 @@
    -------------------------------------------------------------------------- */
 
 .cinema-layer-reveal {
-  position: absolute;
-  top: 8rem;
-  left: 0;
-  right: 0;
-  z-index: 13;
-  will-change: opacity;
+  display: none !important;
 }
 
 .cinema-reveal-badge {
@@ -936,6 +1277,28 @@
     bottom: 3.8rem;
   }
 
+  .cinema-tech-signal--tl {
+    top: 4.8rem;
+  }
+
+  .cinema-tech-signal--tr {
+    top: 4.8rem;
+  }
+
+  .cinema-tech-signal--bl,
+  .cinema-tech-signal--br {
+    display: none;
+  }
+
+  .cinema-vehicle-mask-container {
+    width: 96vw;
+    max-height: 52vh;
+  }
+
+  .cinema-scroll-invite {
+    bottom: 1.2rem;
+  }
+
   .cinema-specs-strip {
     grid-template-columns: 1fr 1fr;
     gap: 0.35rem;
@@ -966,9 +1329,38 @@
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .cinema-blackout-veil {
+    display: none !important;
+  }
+
   .cinema-viewport-overlay {
     position: relative !important;
     inset: auto !important;
+  }
+
+  .cinema-hero-vehicle-stage {
+    position: relative !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .cinema-vehicle-mask-container {
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+
+  .cinema-tech-signal {
+    opacity: 0.65 !important;
+    transform: none !important;
+  }
+
+  .cinema-scroll-invite {
+    opacity: 1 !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .cinema-scroll-invite-runner {
+    animation: none !important;
   }
 
   .cinema-layer-arrival,
@@ -990,6 +1382,10 @@
   .cinema-parallax-annotations,
   .cinema-parallax-foreground {
     transform: none !important;
+  }
+
+  .cinema-arch-watermark {
+    display: none !important;
   }
 
   .cinema-playhead-rail,

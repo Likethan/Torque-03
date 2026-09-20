@@ -1,0 +1,195 @@
+/* ==========================================================================
+   CINEMATIC CHAPTER INDICATOR STYLING (Step 14)
+   ========================================================================== */
+
+.cinematic-chapter-root {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 900;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: auto;
+}
+
+/* Collapsed Bar */
+.cinematic-chapter-bar {
+  background: rgba(14, 18, 24, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cinematic-chapter-root:hover .cinematic-chapter-bar {
+  border-color: rgba(200, 16, 46, 0.45);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Hairline Progress Gauge */
+.chapter-bar-progress-track {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-bar-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #c8102e; /* Authentic Honda Crimson */
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* Trigger Button */
+.chapter-bar-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem;
+  background: transparent;
+  border: none;
+  color: #f1f5f9;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: uppercase;
+}
+
+.chapter-bar-trigger:focus-visible {
+  outline: 2px solid #00d4ff;
+  outline-offset: 1px;
+}
+
+.chapter-bar-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c8102e;
+  box-shadow: 0 0 8px rgba(200, 16, 46, 0.85);
+  margin-right: 0.2rem;
+}
+
+.chapter-bar-index {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.chapter-bar-sep {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.chapter-bar-name {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+/* Expanded Chapter Menu */
+.cinematic-chapter-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0.4rem;
+  background: rgba(12, 16, 22, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 210px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
+  animation: chapterDrawerFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes chapterDrawerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cinematic-chapter-item {
+  margin: 0;
+  padding: 0;
+}
+
+.cinematic-chapter-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.65rem;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cinematic-chapter-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+.cinematic-chapter-btn.active {
+  background: rgba(200, 16, 46, 0.18);
+  color: #ffffff;
+  font-weight: 700;
+  border-left: 2px solid #c8102e;
+}
+
+.chapter-btn-idx {
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 700;
+  min-width: 18px;
+}
+
+.cinematic-chapter-btn.active .chapter-btn-idx {
+  color: #c8102e;
+}
+
+.chapter-btn-title {
+  flex: 1;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .cinematic-chapter-root {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .chapter-bar-trigger {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  .cinematic-chapter-list {
+    width: 180px;
+  }
+}

@@ -123,21 +123,43 @@ export function Accord3DCanvas({
   }
 
   const quality = getQualityConfig()
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const [isInViewport, setIsInViewport] = useState(true)
+
+  // WebGL Performance Throttling: Pause frameloop when scrolled out of view
+  useEffect(() => {
+    const el = wrapperRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInViewport(entry.isIntersecting)
+      },
+      { rootMargin: '250px 0px 250px 0px' }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div
+      ref={wrapperRef}
       className={`three-scene-wrapper ${className}`}
       role="region"
       aria-label="Interactive 3D mechanical CAD assembly study of the 2003 Honda Accord powertrain architecture"
     >
       <ThreeErrorBoundary>
         <Canvas
+          shadows
+          frameloop={isInViewport ? 'always' : 'demand'}
           gl={{
             antialias: quality.antialiasing,
             alpha: true,
             powerPreference: quality.powerPreference,
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.15,
+            outputColorSpace: THREE.SRGBColorSpace,
           }}
           dpr={quality.dpr}
           className="three-scene-canvas"

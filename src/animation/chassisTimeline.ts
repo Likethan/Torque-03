@@ -1,11 +1,12 @@
 /**
- * CHASSIS & ARCHITECTURE SCENE TIMELINE (Step 10 - Advanced Scroll Storytelling)
+ * CHASSIS & ARCHITECTURE SCENE TIMELINE (Step 5 - Kinetic Typography)
  *
  * Choreographs the Chapter 03 Monocoque Architecture narrative:
  * 1. Structural Badge & CAD identifier emergence
- * 2. Unibody Title & Architectural Lead reveal
+ * 2. Masked-word baseline reveal of Title ("High-Rigidity Unibody & Chassis Dynamics")
  * 3. Accent hairline rule expansion
- * 4. Staggered structural specs (+27% Torsional Rigidity, 48% High-Tensile Steel, Double-Wishbone, 5★ Safety)
+ * 4. Architectural Lead reveal
+ * 5. Staggered structural specs (+27% Torsional Rigidity, 48% High-Tensile Steel, Double-Wishbone, 5★ Safety)
  *
  * Pure GSAP timeline function with zero scroll dependencies.
  */
@@ -16,8 +17,10 @@ export interface ChassisTimelineTargets {
   container: HTMLElement | null
   badge: HTMLElement | null
   title: HTMLElement | null
+  titleWords?: HTMLElement[]
   hairline: HTMLElement | null
   lead: HTMLElement | null
+  leadWords?: HTMLElement[]
   specs: (HTMLElement | null)[]
 }
 
@@ -47,13 +50,13 @@ export function createChassisTimeline(
   if (targets.badge) {
     gsap.set(targets.badge, { opacity: 0, x: -15 })
   }
-  if (targets.title) {
+  if (targets.title && !targets.titleWords) {
     gsap.set(targets.title, { opacity: 0, y: 20 })
   }
   if (targets.hairline) {
     gsap.set(targets.hairline, { scaleX: 0, transformOrigin: 'left center' })
   }
-  if (targets.lead) {
+  if (targets.lead && !targets.leadWords) {
     gsap.set(targets.lead, { opacity: 0, y: 15 })
   }
 
@@ -91,8 +94,21 @@ export function createChassisTimeline(
     )
   }
 
-  // 3. Title reveal
-  if (targets.title) {
+  // 3. Title reveal (Masked words if split, otherwise element fromTo)
+  if (targets.titleWords && targets.titleWords.length > 0) {
+    tl.fromTo(
+      targets.titleWords,
+      { opacity: 0, y: '105%' },
+      {
+        opacity: 1,
+        y: '0%',
+        duration: 0.65,
+        stagger: 0.06,
+        ease: 'power3.out',
+      },
+      'chassisStart+=0.25'
+    )
+  } else if (targets.title) {
     tl.to(
       targets.title,
       {
@@ -118,7 +134,20 @@ export function createChassisTimeline(
   }
 
   // 5. Architectural Lead
-  if (targets.lead) {
+  if (targets.leadWords && targets.leadWords.length > 0) {
+    tl.fromTo(
+      targets.leadWords,
+      { opacity: 0, y: 14 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        stagger: 0.018,
+        ease: 'power2.out',
+      },
+      'chassisStart+=0.4'
+    )
+  } else if (targets.lead) {
     tl.to(
       targets.lead,
       {

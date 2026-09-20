@@ -16,6 +16,8 @@ export interface QualityConfig {
   contactShadows: boolean
   shadowBlur: number
   shadowScale: number
+  shadowMapSize: number
+  enableDirectionalShadows: boolean
   powerPreference: 'high-performance' | 'default' | 'low-power'
   enableShaderMicroPulse: boolean
   antialiasing: boolean
@@ -29,6 +31,8 @@ const QUALITY_CONFIGS: Record<QualityTier, QualityConfig> = {
     contactShadows: true,
     shadowBlur: 2.2,
     shadowScale: 10,
+    shadowMapSize: 2048,
+    enableDirectionalShadows: true,
     powerPreference: 'high-performance',
     enableShaderMicroPulse: true,
     antialiasing: true,
@@ -40,6 +44,8 @@ const QUALITY_CONFIGS: Record<QualityTier, QualityConfig> = {
     contactShadows: true,
     shadowBlur: 1.5,
     shadowScale: 8,
+    shadowMapSize: 1024,
+    enableDirectionalShadows: true,
     powerPreference: 'default',
     enableShaderMicroPulse: false,
     antialiasing: true,
@@ -51,6 +57,8 @@ const QUALITY_CONFIGS: Record<QualityTier, QualityConfig> = {
     contactShadows: false,
     shadowBlur: 0,
     shadowScale: 0,
+    shadowMapSize: 512,
+    enableDirectionalShadows: false,
     powerPreference: 'low-power',
     enableShaderMicroPulse: false,
     antialiasing: false,

@@ -218,6 +218,199 @@
   text-align: right;
 }
 
+/* ============================================================================
+   STEP 9: EXPLODED ENGINEERING VIEW CONTROLS & INSPECTION
+   ============================================================================ */
+
+.three-stage__explode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: rgba(18, 22, 28, 0.85);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 2px;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  margin-bottom: var(--space-xs);
+}
+
+.three-stage__explode-toggle:hover {
+  background: rgba(26, 31, 38, 0.95);
+  border-color: var(--color-accent-red);
+}
+
+.three-stage__explode-toggle--active {
+  background: rgba(200, 16, 46, 0.15);
+  border-color: var(--color-accent-red);
+  box-shadow: 0 0 12px rgba(200, 16, 46, 0.25);
+}
+
+.three-stage__explode-icon {
+  font-size: 0.95rem;
+  color: var(--color-accent-red);
+  margin-right: 0.5rem;
+}
+
+.three-stage__explode-text {
+  flex: 1;
+  text-align: left;
+  font-weight: 500;
+}
+
+.three-stage__explode-badge {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  background: rgba(200, 16, 46, 0.2);
+  border: 1px solid rgba(200, 16, 46, 0.4);
+  border-radius: 2px;
+  color: var(--color-accent-red);
+}
+
+/* Accessible Subsystem Tabs */
+.three-stage__subsystems {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.three-stage__subsystems-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.three-stage__subsystems-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.three-stage__comp-btn {
+  padding: 0.25rem 0.5rem;
+  background: rgba(14, 17, 21, 0.5);
+  border: 1px solid var(--color-hud-border);
+  border-radius: 2px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.three-stage__comp-btn:hover {
+  border-color: var(--color-text-secondary);
+  color: var(--color-text-primary);
+}
+
+.three-stage__comp-btn--selected {
+  border-color: var(--color-accent-red);
+  background: rgba(200, 16, 46, 0.15);
+  color: var(--color-accent-red);
+  font-weight: 600;
+}
+
+/* Component Inspector Detail Card */
+.three-stage__component-inspector {
+  background: rgba(15, 18, 24, 0.9);
+  border: 1px solid rgba(200, 16, 46, 0.4);
+  border-left: 3px solid var(--color-accent-red);
+  padding: 0.75rem;
+  border-radius: 2px;
+  margin-top: 0.25rem;
+  animation: inspectorFadeIn 0.25s ease-out;
+}
+
+@keyframes inspectorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.three-stage__inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.three-stage__inspector-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.58rem;
+  color: var(--color-accent-red);
+  letter-spacing: 0.1em;
+}
+
+.three-stage__inspector-close {
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.three-stage__inspector-close:hover {
+  color: var(--color-text-primary);
+}
+
+.three-stage__inspector-title {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.three-stage__inspector-desc {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+  margin: 0 0 0.5rem 0;
+}
+
+.three-stage__inspector-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.4rem;
+}
+
+.three-stage__spec-item {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+}
+
+.three-stage__spec-k {
+  color: var(--color-text-tertiary);
+}
+
+.three-stage__spec-v {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
 @media (max-width: 1024px) {
   .three-stage__grid {
     grid-template-columns: 1fr;
@@ -231,3 +424,4 @@
     min-height: auto;
   }
 }
+

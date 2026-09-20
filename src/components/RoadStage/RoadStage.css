@@ -1,0 +1,376 @@
+/* ============================================================================
+   ROAD CINEMATIC STAGE (Step 11 — Driving / Road Cinematic Sequence)
+   ============================================================================ */
+
+.road-stage-section {
+  position: relative;
+  background-color: var(--color-bg-primary, #0c0e12);
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  border-bottom: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.road-stage-pin-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.road-stage-sticky-content {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--space-2xl, 4rem);
+  padding-bottom: var(--space-2xl, 4rem);
+  box-sizing: border-box;
+}
+
+.road-stage__header {
+  margin-bottom: var(--space-xl, 2rem);
+}
+
+.road-stage__label {
+  display: inline-block;
+  margin-bottom: var(--space-xs, 0.5rem);
+  color: var(--color-accent-red, #c8102e);
+}
+
+.road-stage__title {
+  margin-bottom: var(--space-xs, 0.5rem);
+}
+
+.road-stage__intro {
+  max-width: 68ch;
+  color: var(--color-text-secondary, #9da4b0);
+  line-height: 1.6;
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.road-stage__grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: var(--space-xl, 2rem);
+  align-items: stretch;
+}
+
+.road-stage__viewport-container {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  height: 560px;
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 2px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, #161b24 0%, #0a0d12 100%);
+}
+
+/* Editorial Kinetic Typography Overlay inside 3D Viewport */
+.road-stage__editorial-banner {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.road-stage__editorial-kicker {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  color: var(--color-accent-red, #c8102e);
+  text-transform: uppercase;
+}
+
+.road-stage__editorial-headline {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+}
+
+/* Sidebar with Technical Specifications & Phase Sequence */
+.road-stage__sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-md, 1rem);
+  background: rgba(18, 21, 26, 0.65);
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding: var(--space-lg, 1.5rem);
+  border-radius: 2px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.road-stage__phase-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.road-stage__phase-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--color-accent-red, #c8102e);
+  text-transform: uppercase;
+}
+
+.road-stage__phase-heading {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #f0f3f8);
+  margin: 0;
+}
+
+.road-stage__phase-desc {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-secondary, #9da4b0);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Step 12 Weather & Environmental Telemetry Card */
+.road-stage__weather-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: rgba(14, 18, 24, 0.7);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-left: 2px solid var(--color-technical-cyan, #00d4ff);
+  padding: 0.6rem 0.75rem;
+  border-radius: 2px;
+}
+
+.road-stage__weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.road-stage__weather-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: var(--color-technical-cyan, #00d4ff);
+  text-transform: uppercase;
+}
+
+.road-stage__weather-state {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  background: rgba(0, 212, 255, 0.15);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.road-stage__weather-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.35rem;
+}
+
+.road-stage__weather-submetric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.road-stage__weather-sublabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--color-text-tertiary, #687282);
+  text-transform: uppercase;
+}
+
+.road-stage__weather-subval {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #f0f3f8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Metrics Readouts (Velocity & Distance) */
+.road-stage__metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: var(--space-sm, 0.75rem);
+}
+
+.road-stage__metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  background: rgba(12, 15, 19, 0.6);
+  border: 1px solid var(--color-hud-border, rgba(255, 255, 255, 0.1));
+  padding: 0.45rem 0.6rem;
+  border-radius: 2px;
+}
+
+.road-stage__metric-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary, #687282);
+  text-transform: uppercase;
+}
+
+.road-stage__metric-value {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-technical-cyan, #00d4ff);
+}
+
+/* Phase Navigator Buttons */
+.road-stage__phase-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: var(--space-md, 1rem);
+}
+
+.road-stage__nav-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary, #606877);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.road-stage__phase-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.35rem;
+}
+
+.road-stage__phase-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.5rem;
+  background: rgba(14, 17, 21, 0.6);
+  border: 1px solid var(--color-hud-border, rgba(255, 255, 255, 0.12));
+  border-radius: 2px;
+  color: var(--color-text-tertiary, #858e9d);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+  text-align: left;
+}
+
+.road-stage__phase-btn:hover {
+  border-color: var(--color-accent, #4078c0);
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(26, 31, 38, 0.8);
+}
+
+.road-stage__phase-btn--active {
+  border-color: var(--color-accent-red, #c8102e);
+  background: rgba(200, 16, 46, 0.14);
+  color: var(--color-text-primary, #ffffff);
+  font-weight: 500;
+}
+
+.road-stage__phase-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary, #606877);
+  opacity: 0.4;
+}
+
+.road-stage__phase-btn--active .road-stage__phase-indicator {
+  background: var(--color-accent-red, #c8102e);
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(200, 16, 46, 0.8);
+}
+
+/* Scrub Progress Gauges */
+.road-stage__scrub-guide {
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: var(--space-sm, 0.75rem);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  color: var(--color-text-tertiary, #858e9d);
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+}
+
+.road-stage__scrub-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+}
+
+.road-stage__scrub-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.road-stage__scrub-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--color-hud-border, rgba(255, 255, 255, 0.12));
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.road-stage__scrub-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--color-accent-red, #c8102e);
+  transition: width 0.08s linear;
+}
+
+.road-stage__scrub-percent {
+  font-weight: 600;
+  color: var(--color-accent-red, #c8102e);
+  min-width: 36px;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .road-stage__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg, 1.5rem);
+  }
+  .road-stage__viewport-container {
+    height: 440px;
+    min-height: 400px;
+  }
+  .road-stage-sticky-content {
+    min-height: auto;
+  }
+  .road-stage__phase-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

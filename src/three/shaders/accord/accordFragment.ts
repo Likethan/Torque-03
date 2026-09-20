@@ -45,7 +45,7 @@ export const ACCORD_FRAGMENT_SHADER = /* glsl */ `
   /**
    * Clamps scalar value to [0.0, 1.0].
    */
-  float saturate(float val) {
+  float clamp01(float val) {
     return clamp(val, 0.0, 1.0);
   }
 
@@ -53,7 +53,7 @@ export const ACCORD_FRAGMENT_SHADER = /* glsl */ `
    * Remaps a scalar value from one range to another.
    */
   float remap(float value, float inMin, float inMax, float outMin, float outMax) {
-    return outMin + (outMax - outMin) * saturate((value - inMin) / (inMax - inMin));
+    return outMin + (outMax - outMin) * clamp01((value - inMin) / (inMax - inMin));
   }
 
   void main() {
@@ -68,7 +68,7 @@ export const ACCORD_FRAGMENT_SHADER = /* glsl */ `
 
     // 3. View-Angle Contouring (N · V) - Requirement 13 & 14
     // Glancing angle factor enhances mechanical edges and machined radii
-    float NdotV = saturate(dot(N, V));
+    float NdotV = clamp01(dot(N, V));
     float edgeFactor = pow(1.0 - NdotV, 2.6) * (0.35 + (0.45 * uInspection));
 
     // 4. Engineering Inspection Band - Requirement 10 & 11
@@ -91,7 +91,7 @@ export const ACCORD_FRAGMENT_SHADER = /* glsl */ `
     // 6. Pointer Parallax Response - Requirement 18
     // Subtle view-angle shift reacting to mouse cursor offset
     vec3 pointerShift = vec3(uPointer.x * 0.15, uPointer.y * 0.15, 0.0);
-    float pointerAngle = saturate(dot(N, normalize(V + pointerShift)));
+    float pointerAngle = clamp01(dot(N, normalize(V + pointerShift)));
     float pointerHighlight = pow(pointerAngle, 12.0) * 0.12;
 
     // 7. Shading Composition

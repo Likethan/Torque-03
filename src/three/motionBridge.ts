@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import type { CameraStateId } from './camera/cameraTypes'
+import type { CameraMode } from './interior/interiorStore'
 
 /**
  * ----------------------------------------------------------------------------
@@ -35,6 +36,23 @@ export interface MotionBridgeState {
   shaderInspection: number
   shaderReveal: number
   shaderIntensity: number
+  // Step 10 Interior Camera Transition state
+  interiorProgress: number
+  cameraMode: CameraMode
+  // Step 11 Road Cinematic Sequence state
+  roadProgress: number
+  roadSpeed: number
+  roadDistance: number
+  // Step 12 Environmental Interaction & Weather state
+  weatherState: string
+  timeOfDay: string
+  rainIntensity: number
+  roadWetness: number
+  windIntensity: number
+  fogIntensity: number
+  // Step 13 Advanced Automotive Detail Systems state
+  activeDetailStudy: string | null
+  detailBlend: number
 }
 
 const state: MotionBridgeState = {
@@ -58,6 +76,19 @@ const state: MotionBridgeState = {
   shaderInspection: 0,
   shaderReveal: 0,
   shaderIntensity: 1.0,
+  interiorProgress: 0,
+  cameraMode: 'EXTERIOR' as CameraMode,
+  roadProgress: 0,
+  roadSpeed: 0,
+  roadDistance: 0,
+  weatherState: 'CLEAR',
+  timeOfDay: 'LATE_AFTERNOON',
+  rainIntensity: 0,
+  roadWetness: 0,
+  windIntensity: 0.15,
+  fogIntensity: 0.012,
+  activeDetailStudy: null,
+  detailBlend: 0,
 }
 
 /**
@@ -136,8 +167,64 @@ export function updateShaderRuntime(
 }
 
 /**
+ * Sets the interior transition progress [0.0, 1.0] from ScrollTrigger scrub.
+ */
+export function setInteriorMotionProgress(progress: number): void {
+  state.interiorProgress = Math.min(Math.max(progress, 0), 1)
+}
+
+/**
+ * Sets the camera mode (EXTERIOR, ENGINEERING, ENTRY, INTERIOR, EXIT, ROAD).
+ */
+export function setCameraModeState(mode: CameraMode): void {
+  state.cameraMode = mode
+}
+
+/**
+ * Sets the road sequence progress [0.0, 1.0] and vehicle dynamics from ScrollTrigger scrub.
+ */
+export function setRoadMotionProgress(
+  progress: number,
+  speed: number = 0,
+  distance: number = 0
+): void {
+  state.roadProgress = Math.min(Math.max(progress, 0), 1)
+  state.roadSpeed = speed
+  state.roadDistance = distance
+}
+
+/**
+ * Updates Step 12 Environmental Interaction & Weather state in the motion bridge.
+ */
+export function updateEnvironmentMotionState(
+  weatherState: string,
+  timeOfDay: string,
+  rainIntensity: number,
+  roadWetness: number,
+  windIntensity: number,
+  fogIntensity: number
+): void {
+  state.weatherState = weatherState
+  state.timeOfDay = timeOfDay
+  state.rainIntensity = rainIntensity
+  state.roadWetness = roadWetness
+  state.windIntensity = windIntensity
+  state.fogIntensity = fogIntensity
+}
+
+/**
+ * Updates Step 13 Advanced Automotive Detail state in the motion bridge.
+ */
+export function updateDetailMotionState(activeDetailStudy: string | null, detailBlend: number): void {
+  state.activeDetailStudy = activeDetailStudy
+  state.detailBlend = detailBlend
+}
+
+/**
  * Returns read-only reference to current motion bridge state.
  */
 export function getMotionBridgeState(): Readonly<MotionBridgeState> {
   return state
 }
+
+

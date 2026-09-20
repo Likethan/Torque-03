@@ -1,0 +1,360 @@
+/* ==========================================================================
+   AUTOMOTIVE DETAIL STAGE STYLING (Step 13 — Advanced Automotive Detail Systems)
+   ========================================================================== */
+
+.detail-stage-root {
+  position: relative;
+  min-height: 120vh;
+  width: 100%;
+  color: #d1d7e0;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 6rem 2rem 8rem;
+  box-sizing: border-box;
+  pointer-events: none; /* Let canvas receive interactions */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.detail-stage-content {
+  max-width: 1380px;
+  width: 100%;
+  margin: 0 auto;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Header & Classification Header */
+.detail-stage-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-left: 2px solid #00d4ff;
+  padding-left: 1.25rem;
+}
+
+.detail-stage-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #00d4ff;
+  text-transform: uppercase;
+}
+
+.detail-stage-title {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.detail-stage-subtitle {
+  font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+  color: #8c98a8;
+  max-width: 720px;
+  line-height: 1.5;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 9-Study Navigation Grid */
+.detail-nav-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: rgba(12, 16, 22, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem;
+  border-radius: 4px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.detail-nav-button {
+  background: rgba(22, 28, 38, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #94a3b8;
+  padding: 0.6rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.detail-nav-button:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(0, 212, 255, 0.35);
+  color: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.detail-nav-button.active {
+  background: rgba(0, 212, 255, 0.12);
+  border-color: #00d4ff;
+  color: #00d4ff;
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.18);
+}
+
+.detail-nav-idx {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  font-weight: 700;
+}
+
+/* 3D Automotive Studio Viewport */
+.detail-viewport-container {
+  width: 100%;
+  height: clamp(380px, 52vh, 580px);
+  position: relative;
+  background: radial-gradient(circle at 50% 45%, #18202c 0%, #0a0d12 75%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.detail-viewport-container .three-scene-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.detail-viewport-overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: rgba(12, 16, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 2px solid #00d4ff;
+  padding: 0.5rem 0.85rem;
+  border-radius: 2px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.detail-viewport-tag {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: #00d4ff;
+  font-weight: 700;
+}
+
+.detail-viewport-target {
+  font-size: 0.82rem;
+  color: #f8fafc;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Detail Inspection Showcase Panel */
+.detail-inspector-card {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2rem;
+  background: rgba(10, 14, 20, 0.82);
+  border: 1px solid rgba(0, 212, 255, 0.22);
+  border-radius: 4px;
+  padding: 2rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+}
+
+.detail-inspector-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.detail-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  width: fit-content;
+}
+
+.detail-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.detail-card-subtitle {
+  font-size: 0.82rem;
+  color: #00d4ff;
+  letter-spacing: 0.08em;
+}
+
+.detail-card-description {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Technical Specification Table */
+.detail-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.2rem;
+}
+
+.detail-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detail-spec-label {
+  font-size: 0.68rem;
+  color: #64748b;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.detail-spec-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+/* Controls & Lighting Sidebar */
+.detail-sidebar-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  padding-left: 2rem;
+  justify-content: space-between;
+}
+
+.detail-control-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-control-heading {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.detail-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.detail-sub-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 0.4rem 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-sub-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.detail-sub-btn.active {
+  background: rgba(0, 212, 255, 0.18);
+  border-color: #00d4ff;
+  color: #00d4ff;
+}
+
+/* Return / Exit Button */
+.detail-exit-button {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #e2e8f0;
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.detail-exit-button:hover {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: #00d4ff;
+  color: #00d4ff;
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.2);
+}
+
+/* Responsive Media Queries */
+@media (max-width: 992px) {
+  .detail-inspector-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .detail-sidebar-controls {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-left: 0;
+    padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .detail-stage-root {
+    padding: 4rem 1rem 6rem;
+  }
+  .detail-nav-button {
+    flex: 1 1 calc(50% - 0.5rem);
+    font-size: 0.7rem;
+    padding: 0.5rem 0.6rem;
+  }
+  .detail-spec-grid {
+    grid-template-columns: 1fr;
+  }
+}

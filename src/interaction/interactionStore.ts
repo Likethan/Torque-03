@@ -1,6 +1,6 @@
 /**
  * CENTRALIZED INTERACTION STORE
- * STEP 12 — ADVANCED INTERACTION SYSTEM
+ * STEP 6 — ADVANCED CURSOR & MAGNETIC INTERACTION
  *
  * High-frequency mutable store operating entirely outside React's render cycle.
  * Synchronizes with GSAP's precision ticker (single unified RAF loop).
@@ -10,10 +10,11 @@
  */
 
 import gsap from 'gsap'
-import { lerp } from '../motion/lerp'
+import { dampDt } from '../motion/lerp'
 import { normalizePointer, calculateVelocity } from './interactionMath'
-import { prefersReducedMotion } from '../animation/gsapConfig'
 import { setPointerMotion } from '../motion/unifiedMotion'
+
+export type CursorMode = 'DEFAULT' | 'LINK' | 'MAGNETIC' | 'VIEW' | 'EXPLORE' | 'SCRUB'
 
 export interface InteractionState {
   pointerX: number
@@ -30,6 +31,10 @@ export interface InteractionState {
   proximityStrength: number
   magneticStrength: number
   touchMode: boolean
+  cursorMode: CursorMode
+  cursorLabel: string
+  followerX: number
+  followerY: number
 }
 
 export interface InteractionDOMBindings {
@@ -47,8 +52,8 @@ export type InteractionListener = (state: Readonly<InteractionState>) => void
 
 // Central mutable state
 const state: InteractionState = {
-  pointerX: 0,
-  pointerY: 0,
+  pointerX: typeof window !== 'undefined' ? window.innerWidth * 0.5 : 0,
+  pointerY: typeof window !== 'undefined' ? window.innerHeight * 0.5 : 0,
   normalizedX: 0,
   normalizedY: 0,
   smoothedNX: 0,
@@ -61,6 +66,10 @@ const state: InteractionState = {
   proximityStrength: 0,
   magneticStrength: 0,
   touchMode: false,
+  cursorMode: 'DEFAULT',
+  cursorLabel: '',
+  followerX: typeof window !== 'undefined' ? window.innerWidth * 0.5 : 0,
+  followerY: typeof window !== 'undefined' ? window.innerHeight * 0.5 : 0,
 }
 
 // Previous frame tracking for velocity calculations
@@ -117,6 +126,8 @@ export function setPointerLeave(): void {
   state.activeTarget = 'NONE'
   state.proximityStrength = 0
   state.magneticStrength = 0
+  state.cursorMode = 'DEFAULT'
+  state.cursorLabel = ''
 }
 
 /**
@@ -130,6 +141,14 @@ export function setActiveInteraction(
   state.activeTarget = targetName
   state.proximityStrength = proximity
   state.magneticStrength = magnetic
+}
+
+/**
+ * Updates contextual cursor mode and optional label.
+ */
+export function setCursorMode(mode: CursorMode, label: string = ''): void {
+  state.cursorMode = mode
+  state.cursorLabel = label
 }
 
 /**
@@ -159,41 +178,38 @@ export function subscribeToInteraction(listener: InteractionListener): () => voi
 
 /**
  * Unified RAF Ticker Hook (Bound to gsap.ticker)
- * Damps normalized values for smooth camera response, decays velocity, and updates direct DOM bindings.
+ * Damps normalized values with delta-time awareness, decays velocity, and feeds authoritative Unified Motion.
  */
-function onTickerUpdate(_time: number, _deltaTime: number): void {
-  // Smooth normalized coordinates (0.08 smoothing factor for physical weighted camera feel)
-  state.smoothedNX = lerp(state.smoothedNX, state.normalizedX, 0.08)
-  state.smoothedNY = lerp(state.smoothedNY, state.normalizedY, 0.08)
+function onTickerUpdate(_time: number, deltaTime: number): void {
+  const dt = Math.min(Math.max(deltaTime * 0.001, 0.001), 0.1)
+
+  // Smooth normalized coordinates with dt-aware damping
+  state.smoothedNX = dampDt(state.smoothedNX, state.normalizedX, 8.0, dt)
+  state.smoothedNY = dampDt(state.smoothedNY, state.normalizedY, 8.0, dt)
+
+  // Smoothly damp the secondary trailing cursor follower
+  // Creates weighted inertia during rapid movement and settles to zero separation when stopped
+  state.followerX = dampDt(state.followerX, state.pointerX, 14.0, dt)
+  state.followerY = dampDt(state.followerY, state.pointerY, 14.0, dt)
 
   // Velocity decay when pointer stops moving
   const now = performance.now()
   if (now - lastMoveTime > 40) {
-    state.velocityX = lerp(state.velocityX, 0, 0.15)
-    state.velocityY = lerp(state.velocityY, 0, 0.15)
-    state.speed = lerp(state.speed, 0, 0.15)
+    state.velocityX = dampDt(state.velocityX, 0, 7.5, dt)
+    state.velocityY = dampDt(state.velocityY, 0, 7.5, dt)
+    state.speed = dampDt(state.speed, 0, 7.5, dt)
   }
 
-  // INTERACTION 1: Accord Visual Pointer Response (Perspective camera tilt + translation)
-  if (activeDOMBindings.vehicleRigEl) {
-    if (!state.touchMode && !prefersReducedMotion()) {
-      // Base restrained angles (pitch: up to 1.8 deg, yaw: up to 2.2 deg)
-      const baseTiltX = -state.smoothedNY * 1.8
-      const baseTiltY = state.smoothedNX * 2.2
-      const transX = state.smoothedNX * 12
-      const transY = state.smoothedNY * 8
-
-      // Subtle velocity response (Requirement 15: fast pointer movement -> subtle secondary tilt boost)
-      const velFactor = Math.min(0.4, state.speed * 0.08)
-      const finalTiltX = baseTiltX * (1 + velFactor)
-      const finalTiltY = baseTiltY * (1 + velFactor)
-
-      activeDOMBindings.vehicleRigEl.style.transform = 
-        `perspective(1200px) rotateX(${finalTiltX.toFixed(2)}deg) rotateY(${finalTiltY.toFixed(2)}deg) translate3d(${transX.toFixed(1)}px, ${transY.toFixed(1)}px, 0)`
-    } else {
-      activeDOMBindings.vehicleRigEl.style.transform = 'none'
-    }
-  }
+  // Authoritative write to Unified Motion State (One source of truth)
+  setPointerMotion(
+    state.pointerX,
+    state.pointerY,
+    state.smoothedNX,
+    state.smoothedNY,
+    state.speed * 1000, // px/s
+    state.touchMode,
+    state.isPointerInside
+  )
 
   // Direct DOM Telemetry updates (0 React re-renders)
   if (activeDOMBindings.pointerXYEl) {
@@ -211,14 +227,6 @@ function onTickerUpdate(_time: number, _deltaTime: number): void {
     activeDOMBindings.speedEl.textContent = `${state.speed.toFixed(2)} px/ms`
   }
 
-  // Step 19: Authoritative write to Unified Motion State
-  setPointerMotion(
-    state.pointerX,
-    state.pointerY,
-    state.smoothedNX,
-    state.smoothedNY,
-    state.speed * 60 // px/sec
-  )
   if (activeDOMBindings.activeTargetEl) {
     activeDOMBindings.activeTargetEl.textContent = state.activeTarget
     activeDOMBindings.activeTargetEl.style.color =
@@ -255,6 +263,7 @@ export const interactionStore = {
   setRawPointer,
   setPointerLeave,
   setActiveInteraction,
+  setCursorMode,
   registerInteractionDOMBindings,
   getInteractionState,
   subscribeToInteraction,

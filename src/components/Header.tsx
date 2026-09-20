@@ -10,7 +10,14 @@ export function Header() {
   return (
     <header className="header" role="banner">
       <div className="container header__inner">
-        <div className="header__brand">
+        <div
+          className="header__brand"
+          data-cursor="link"
+          data-magnetic="true"
+          data-magnetic-radius="60"
+          data-magnetic-max="8"
+          data-name="HONDA ACCORD"
+        >
           <span className="header__brand-name">Honda Accord</span>
           <span className="header__brand-sub">Seventh Generation · 2003</span>
         </div>
@@ -20,6 +27,11 @@ export function Header() {
             href="#cinematic-timeline"
             className="header__nav-link motion-nav-link"
             onClick={(e) => handleNavClick(e, '#cinematic-timeline')}
+            data-cursor="link"
+            data-magnetic="true"
+            data-magnetic-radius="55"
+            data-magnetic-max="10"
+            data-name="NAV // TIMELINE"
           >
             Timeline
           </a>
@@ -27,6 +39,11 @@ export function Header() {
             href="#specifications"
             className="header__nav-link motion-nav-link"
             onClick={(e) => handleNavClick(e, '#specifications')}
+            data-cursor="link"
+            data-magnetic="true"
+            data-magnetic-radius="55"
+            data-magnetic-max="10"
+            data-name="NAV // SPECIFICATIONS"
           >
             Specifications
           </a>
@@ -34,6 +51,11 @@ export function Header() {
             href="#engineering"
             className="header__nav-link motion-nav-link"
             onClick={(e) => handleNavClick(e, '#engineering')}
+            data-cursor="link"
+            data-magnetic="true"
+            data-magnetic-radius="55"
+            data-magnetic-max="10"
+            data-name="NAV // ENGINEERING"
           >
             Engineering
           </a>
@@ -41,6 +63,11 @@ export function Header() {
             href="#interior"
             className="header__nav-link motion-nav-link"
             onClick={(e) => handleNavClick(e, '#interior')}
+            data-cursor="link"
+            data-magnetic="true"
+            data-magnetic-radius="55"
+            data-magnetic-max="10"
+            data-name="NAV // INTERIOR"
           >
             Interior
           </a>
@@ -48,6 +75,11 @@ export function Header() {
             href="#legacy"
             className="header__nav-link motion-nav-link"
             onClick={(e) => handleNavClick(e, '#legacy')}
+            data-cursor="link"
+            data-magnetic="true"
+            data-magnetic-radius="55"
+            data-magnetic-max="10"
+            data-name="NAV // LEGACY"
           >
             Legacy
           </a>

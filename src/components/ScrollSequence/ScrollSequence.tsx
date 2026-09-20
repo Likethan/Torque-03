@@ -3,7 +3,6 @@ import { useFramePreloader } from '../../hooks/useFramePreloader'
 import { MOTION_CONFIG } from '../../motion/motionConfig'
 import { lerp, clamp } from '../../motion/lerp'
 import type { MotionEngine, MotionContext } from '../../motion/motionEngine'
-import { registerInteractionDOMBindings } from '../../interaction/interactionStore'
 import './ScrollSequence.css'
 
 interface ScrollSequenceProps {
@@ -12,6 +11,7 @@ interface ScrollSequenceProps {
   totalFrames?: number
   stageHeight?: string
   children?: React.ReactNode
+  renderVehiclePlate?: boolean
 }
 
 /**
@@ -27,15 +27,10 @@ export function ScrollSequence({
   totalFrames = MOTION_CONFIG.totalFrames,
   stageHeight = 'var(--cinema-height-desktop, 350vh)',
   children,
+  renderVehiclePlate = false,
 }: ScrollSequenceProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const vehicleRigRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    registerInteractionDOMBindings({
-      vehicleRigEl: vehicleRigRef.current,
-    })
-  }, [])
 
   const { getImage, isLoaded, fallbackImage } = useFramePreloader({
     totalFrames,
@@ -102,14 +97,16 @@ export function ScrollSequence({
       const drawY = (height - drawH) / 2 + cameraOffsetY
 
       // 3. Apply Camera Transform (Primary scale + secondary velocity inertia)
-      ctx.save()
-      ctx.translate(width / 2, height * 0.52)
-      ctx.scale(cameraScale, cameraScale)
-      ctx.translate(-width / 2, -height * 0.52)
+      if (renderVehiclePlate) {
+        ctx.save()
+        ctx.translate(width / 2, height * 0.52)
+        ctx.scale(cameraScale, cameraScale)
+        ctx.translate(-width / 2, -height * 0.52)
 
-      // Draw photographic vehicle plate
-      ctx.drawImage(img, drawX, drawY, drawW, drawH)
-      ctx.restore()
+        // Draw photographic vehicle plate
+        ctx.drawImage(img, drawX, drawY, drawW, drawH)
+        ctx.restore()
+      }
 
       // 4. Studio Lighting Sweep
       const v = MOTION_CONFIG.vehicle

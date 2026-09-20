@@ -15,6 +15,14 @@ export type CameraStateId =
   | 'MECHANICAL'
   | 'RECONSTRUCTION'
   | 'FINAL'
+  // Step 10: Interior Camera Transition
+  | 'INTERIOR_APPROACH'
+  | 'INTERIOR_THRESHOLD'
+  | 'INTERIOR_ENTRY'
+  | 'INTERIOR_CABIN'
+  | 'INTERIOR_DASHBOARD'
+  | 'INTERIOR_WINDSHIELD'
+  | 'INTERIOR_EXIT'
 
 export interface SceneRange {
   start: number // Normalized start bound within global progress [0.0, 1.0]

@@ -72,9 +72,14 @@ export function createStudioRenderer(
     depth: true,
   })
 
-  // Tone mapping for photorealistic studio highlights
+  // Modern Three.js color management & tone mapping for photorealistic studio highlights
+  renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.toneMapping = THREE.ACESFilmicToneMapping
   renderer.toneMappingExposure = 1.15
+
+  // Enable studio shadow mapping
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFShadowMap
 
   // Clamp pixel ratio to max 2.0 to protect mobile GPUs
   const dpr = Math.min(window.devicePixelRatio || 1, 2.0)

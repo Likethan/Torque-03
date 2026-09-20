@@ -127,3 +127,94 @@ export function sampleChoreography(
     assemblyAzimuth,
   }
 }
+
+// ============================================================================
+// INTERIOR CAMERA CHOREOGRAPHY (Step 10 — Interior Camera Transition)
+// ============================================================================
+
+import { INTERIOR_WAYPOINTS, type InteriorWaypoint } from './interiorWaypoints'
+
+// Pre-allocated static vectors for interior choreography (zero GC)
+const intPosA = new THREE.Vector3()
+const intPosB = new THREE.Vector3()
+const intTargetA = new THREE.Vector3()
+const intTargetB = new THREE.Vector3()
+
+/**
+ * Computes the complete choreographed interior 3D state for a given
+ * interior scroll progress [0.0, 1.0].
+ *
+ * Mirrors sampleChoreography() but operates on INTERIOR_WAYPOINTS
+ * and additionally returns FOV and pointer scale interpolation.
+ */
+export function sampleInteriorChoreography(
+  interiorProgress: number,
+  outPosition: THREE.Vector3,
+  outTarget: THREE.Vector3,
+  scaleFactor: number = 1.0
+): {
+  activeWaypoint: InteriorWaypoint
+  nextWaypoint?: InteriorWaypoint
+  localProgress: number
+  transitionProgress: number
+  fov: number
+  pointerScale: number
+} {
+  const clampedProgress = Math.min(Math.max(interiorProgress, 0), 1)
+  const waypoints = INTERIOR_WAYPOINTS
+  const count = waypoints.length
+
+  // 1. Identify active waypoint segment
+  let activeIndex = 0
+  for (let i = 0; i < count; i++) {
+    if (clampedProgress >= waypoints[i].range.start && clampedProgress <= waypoints[i].range.end) {
+      activeIndex = i
+      break
+    }
+    if (clampedProgress > waypoints[i].range.end && i < count - 1 && clampedProgress < waypoints[i + 1].range.start) {
+      activeIndex = i
+      break
+    }
+  }
+
+  if (clampedProgress >= 1.0) activeIndex = count - 1
+
+  const currentWp = waypoints[activeIndex]
+  const nextWp = activeIndex < count - 1 ? waypoints[activeIndex + 1] : currentWp
+
+  // 2. Calculate local progress within current waypoint
+  const localProg = getLocalProgress(clampedProgress, currentWp.range.start, currentWp.range.end)
+
+  // 3. Interpolation factor between current and next
+  let t = 0
+  if (activeIndex < count - 1) {
+    const segStart = currentWp.range.start
+    const segEnd = nextWp.range.start
+    t = smoothstep(getLocalProgress(clampedProgress, segStart, segEnd))
+  } else {
+    t = smoothstep(localProg)
+  }
+
+  // 4. Zero-allocation vector interpolation
+  intPosA.set(...currentWp.position).multiplyScalar(scaleFactor)
+  intPosB.set(...nextWp.position).multiplyScalar(scaleFactor)
+  intTargetA.set(...currentWp.target)
+  intTargetB.set(...nextWp.target)
+
+  outPosition.lerpVectors(intPosA, intPosB, t)
+  outTarget.lerpVectors(intTargetA, intTargetB, t)
+
+  // 5. FOV and pointer scale interpolation
+  const fov = lerp(currentWp.fovOverride, nextWp.fovOverride, t)
+  const pointerScale = lerp(currentWp.pointerScale, nextWp.pointerScale, t)
+
+  return {
+    activeWaypoint: currentWp,
+    nextWaypoint: nextWp !== currentWp ? nextWp : undefined,
+    localProgress: localProg,
+    transitionProgress: t,
+    fov,
+    pointerScale,
+  }
+}
+

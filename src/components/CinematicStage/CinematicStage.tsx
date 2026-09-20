@@ -3,8 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useMotionEngine } from '../../hooks/useMotionEngine'
 import { MOTION_CONFIG } from '../../motion/motionConfig'
-import { clamp } from '../../motion/clamp'
-import { createArrivalTimeline, createArrivalEntranceTimeline } from '../../animation/arrivalTimeline'
+import { createArrivalTimeline, createCinematicAutomotiveIntroTimeline } from '../../animation/arrivalTimeline'
 import { createFormTimeline } from '../../animation/formTimeline'
 import { createChassisTimeline } from '../../animation/chassisTimeline'
 import { createPowertrainTimeline } from '../../animation/powertrainTimeline'
@@ -24,15 +23,122 @@ import {
 } from '../../interaction/interactionManager'
 import { registerInteractionDOMBindings } from '../../interaction/interactionStore'
 import { registerThreeDOMBindings } from '../../three/telemetry'
-import { registerUnifiedMotionDOMBindings } from '../../motion/unifiedMotion'
+import {
+  registerUnifiedMotionDOMBindings,
+  setScrollMotion,
+  stepSharedMotionPhysics,
+} from '../../motion/unifiedMotion'
 import { prefersReducedMotion } from '../../animation/gsapConfig'
 import { ScrollSequence } from '../ScrollSequence/ScrollSequence'
+import { lerp } from '../../motion/lerp'
 import { TechnicalLabelLayer } from '../TechnicalLabel/TechnicalLabel'
+import { VehicleHoverZones } from './VehicleHoverZones'
 import './CinematicStage.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export type ActiveSceneTab = 'ARRIVAL' | 'FORM' | 'CHASSIS' | 'POWERTRAIN' | 'CONCLUSION'
+
+interface CameraPose {
+  scale: number
+  x: number
+  y: number
+  headlightGlow: number
+  grilleGlow: number
+  lightSweepX: number
+  keyIntensity: number
+  rimIntensity: number
+  shadowOpacity: number
+}
+
+/**
+ * Continuous virtual camera pose calculator mapping scroll progress (0.0 to 1.0)
+ * to 3D spatial framing, focal zoom, pan, and 5-state studio automotive lighting.
+ */
+function calculateCameraPose(p: number): CameraPose {
+  // 1. Stage 1: Arrival & Intro (0.00 -> 0.20) — Low-Key Studio Awakening
+  if (p <= 0.20) {
+    const t = p / 0.20
+    const ease = t * (2 - t)
+    return {
+      scale: lerp(1.0, 1.25, ease),
+      x: lerp(0, 20, ease),
+      y: lerp(0, -18, ease),
+      headlightGlow: lerp(0, 0.20, ease),
+      grilleGlow: lerp(0, 0.18, ease),
+      lightSweepX: lerp(-120, -40, ease),
+      keyIntensity: lerp(0.70, 1.25, ease),
+      rimIntensity: lerp(1.20, 1.05, ease),
+      shadowOpacity: lerp(0.76, 0.72, ease),
+    }
+  }
+
+  // 2. Stage 2: Front Detail & Headlight Awakening (0.20 -> 0.45) — Front-Quarter Wedge
+  if (p <= 0.45) {
+    const t = (p - 0.20) / 0.25
+    const ease = Math.sin(t * Math.PI * 0.5)
+    return {
+      scale: lerp(1.25, 1.48, ease),
+      x: lerp(20, 85, ease),
+      y: lerp(-18, -34, ease),
+      headlightGlow: lerp(0.20, 0.82, Math.sin(t * Math.PI)),
+      grilleGlow: lerp(0.18, 0.60, Math.sin(t * Math.PI)),
+      lightSweepX: lerp(-40, 45, ease),
+      keyIntensity: lerp(1.25, 1.70, ease),
+      rimIntensity: lerp(1.05, 0.95, ease),
+      shadowOpacity: 0.70,
+    }
+  }
+
+  // 3. Stage 3: Side Flank & Monocoque Chassis (0.45 -> 0.70) — Rim Light Glint on Shoulder
+  if (p <= 0.70) {
+    const t = (p - 0.45) / 0.25
+    const ease = 0.5 - Math.cos(t * Math.PI) * 0.5
+    return {
+      scale: lerp(1.48, 1.32, ease),
+      x: lerp(85, -75, ease),
+      y: lerp(-34, 14, ease),
+      headlightGlow: lerp(0.30, 0.15, ease),
+      grilleGlow: lerp(0.22, 0.08, ease),
+      lightSweepX: lerp(45, 95, ease),
+      keyIntensity: lerp(1.70, 1.45, ease),
+      rimIntensity: lerp(0.95, 1.40, ease),
+      shadowOpacity: 0.68,
+    }
+  }
+
+  // 4. Stage 4: Powertrain & Technical CAD Detail (0.70 -> 0.88) — Directional Mechanical Rig
+  if (p <= 0.88) {
+    const t = (p - 0.70) / 0.18
+    const ease = 0.5 - Math.cos(t * Math.PI) * 0.5
+    return {
+      scale: lerp(1.32, 1.44, ease),
+      x: lerp(-75, 55, ease),
+      y: lerp(14, -42, ease),
+      headlightGlow: 0.15,
+      grilleGlow: 0.10,
+      lightSweepX: lerp(95, -15, ease),
+      keyIntensity: lerp(1.45, 1.80, ease),
+      rimIntensity: 1.05,
+      shadowOpacity: 0.65,
+    }
+  }
+
+  // 5. Stage 5: Full Vehicle Crane Pull-Back Synthesis (0.88 -> 1.00) — Balanced 3-Point Studio
+  const t = (p - 0.88) / 0.12
+  const ease = t * t * (3 - 2 * t)
+  return {
+    scale: lerp(1.44, 1.00, ease),
+    x: lerp(55, 0, ease),
+    y: lerp(-42, 0, ease),
+    headlightGlow: lerp(0.15, 0.35, ease),
+    grilleGlow: lerp(0.10, 0.18, ease),
+    lightSweepX: lerp(-15, 0, ease),
+    keyIntensity: lerp(1.80, 1.85, ease),
+    rimIntensity: lerp(1.05, 1.10, ease),
+    shadowOpacity: lerp(0.65, 0.72, ease),
+  }
+}
 
 export function CinematicStage() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -48,6 +154,7 @@ export function CinematicStage() {
   // PARALLAX LAYER REFS (Step 10 Layered Parallax Architecture)
   // --------------------------------------------------------------------------
   const bgGridRef = useRef<HTMLDivElement>(null) // Layer 1: Background CAD Grid (rate 0.02)
+  const archWatermarkRef = useRef<HTMLDivElement>(null) // Layer 1.5: Horizontal Architectural Watermark (Drift)
   const cameraRigRef = useRef<HTMLDivElement>(null) // Layer 2: Camera Viewport Rig (rate 0.06 - 0.08, scale 0.92 -> 1.08)
   const annotationsLayerRef = useRef<HTMLDivElement>(null) // Layer 3: Secondary Technical Annotations (rate 0.10)
   const foregroundLayerRef = useRef<HTMLDivElement>(null) // Layer 4: Foreground Typography & HUD (rate 0.14)
@@ -59,19 +166,47 @@ export function CinematicStage() {
   const phaseNameRef = useRef<HTMLSpanElement>(null)
 
   // --------------------------------------------------------------------------
-  // CHAPTER 01: ARRIVAL REFS
+  // CHAPTER 01: ARRIVAL REFS & STEP 1 CINEMATIC AUTOMOTIVE INTRO REFS
   // --------------------------------------------------------------------------
   const arrivalLayerRef = useRef<HTMLDivElement>(null)
+  const blackoutVeilRef = useRef<HTMLDivElement>(null)
+  const studioAtmosphereRef = useRef<HTMLDivElement>(null)
+  const signal01Ref = useRef<HTMLSpanElement>(null)
+  const signal02Ref = useRef<HTMLSpanElement>(null)
+  const signal03Ref = useRef<HTMLSpanElement>(null)
+  const signal04Ref = useRef<HTMLSpanElement>(null)
+  const lightSweepRef = useRef<HTMLDivElement>(null)
+  const heroVehicleStageRef = useRef<HTMLDivElement>(null)
+  const vehicleMaskRef = useRef<HTMLDivElement>(null)
+  const headlightGlowRef = useRef<HTMLDivElement>(null)
+  const grilleGlowRef = useRef<HTMLDivElement>(null)
+  const groundShadowRef = useRef<HTMLDivElement>(null)
+  const currentScrollPoseRef = useRef<CameraPose>({
+    scale: 1.0,
+    x: 0,
+    y: 0,
+    headlightGlow: 0,
+    grilleGlow: 0,
+    lightSweepX: -120,
+    keyIntensity: 0.70,
+    rimIntensity: 1.20,
+    shadowOpacity: 0.76,
+  })
+  const titleYearRef = useRef<HTMLSpanElement>(null)
   const modelTagRef = useRef<HTMLSpanElement>(null)
   const heroTitleRef = useRef<HTMLHeadingElement>(null)
   const heroSeriesRef = useRef<HTMLParagraphElement>(null)
   const hairlineRef = useRef<HTMLHRElement>(null)
   const heroLeadRef = useRef<HTMLParagraphElement>(null)
+  const scrollInviteRef = useRef<HTMLDivElement>(null)
+  const scrollInviteLineRef = useRef<HTMLDivElement>(null)
   const hudLeftRef = useRef<HTMLDivElement>(null)
   const hudRightRef = useRef<HTMLDivElement>(null)
   const playheadRailRef = useRef<HTMLDivElement>(null)
   const scrubCueRef = useRef<HTMLDivElement>(null)
   const footerActionsRef = useRef<HTMLDivElement>(null)
+  const introTlRef = useRef<gsap.core.Timeline | null>(null)
+  const idleMotionTweensRef = useRef<gsap.core.Tween[]>([])
 
   // Reveal Specs Layer
   const revealLayerRef = useRef<HTMLDivElement>(null)
@@ -412,19 +547,33 @@ export function CinematicStage() {
     const leadSplit = splitText(heroLeadRef.current, { type: 'words' })
     if (leadSplit) splitReverts.push(leadSplit.revert)
 
-    // 3. Form Title: Masked words ("Sculpted by Wind and Purpose")
+    // 3. Form Title & Lead: Masked words ("Sculpted by Wind and Purpose")
     const formTitleSplit = splitText(formTitleRef.current, { type: 'masked-words' })
     if (formTitleSplit) splitReverts.push(formTitleSplit.revert)
 
     const formLeadSplit = splitText(formLeadRef.current, { type: 'words' })
     if (formLeadSplit) splitReverts.push(formLeadSplit.revert)
 
-    // 4. Powertrain Title: Masked words ("The Mechanical Heart: 3.0L V6 VTEC")
+    // 4. Chassis Title & Lead: Masked words ("High-Rigidity Unibody & Chassis Dynamics")
+    const chassisTitleSplit = splitText(chassisTitleRef.current, { type: 'masked-words' })
+    if (chassisTitleSplit) splitReverts.push(chassisTitleSplit.revert)
+
+    const chassisLeadSplit = splitText(chassisLeadRef.current, { type: 'words' })
+    if (chassisLeadSplit) splitReverts.push(chassisLeadSplit.revert)
+
+    // 5. Powertrain Title & Lead: Masked words ("The Mechanical Heart: 3.0L V6 VTEC")
     const powertrainTitleSplit = splitText(powertrainTitleRef.current, { type: 'masked-words' })
     if (powertrainTitleSplit) splitReverts.push(powertrainTitleSplit.revert)
 
     const powertrainLeadSplit = splitText(powertrainLeadRef.current, { type: 'words' })
     if (powertrainLeadSplit) splitReverts.push(powertrainLeadSplit.revert)
+
+    // 6. Conclusion Title & Lead: Masked words ("Engineering as a Complete Discipline")
+    const conclusionTitleSplit = splitText(conclusionTitleRef.current, { type: 'masked-words' })
+    if (conclusionTitleSplit) splitReverts.push(conclusionTitleSplit.revert)
+
+    const conclusionLeadSplit = splitText(conclusionLeadRef.current, { type: 'words' })
+    if (conclusionLeadSplit) splitReverts.push(conclusionLeadSplit.revert)
 
     const ctx = gsap.context(() => {
       // Establish initial hidden states for later chapter layers
@@ -465,20 +614,66 @@ export function CinematicStage() {
       )
       arrivalTimelineRef.current = arrivalTl
 
-      // Play initial entrance animation if landing at top of page
-      if (typeof window !== 'undefined' && window.scrollY < 50 && !prefersReducedMotion()) {
-        createArrivalEntranceTimeline({
-          canvasStage: stageOverlayRef.current,
-          modelTag: modelTagRef.current,
-          title: heroTitleRef.current,
-          titleChars: titleSplit?.chars,
-          series: heroSeriesRef.current,
-          hairline: hairlineRef.current,
-          lead: heroLeadRef.current,
-          hudItems: [hudLeftRef.current, hudRightRef.current, playheadRailRef.current],
-          scrubCue: scrubCueRef.current,
-          footerActions: footerActionsRef.current,
-        })
+      // Play 8-phase Master Cinematic Automotive Intro (Step 1)
+      if (typeof window !== 'undefined' && window.scrollY < 50) {
+        const introTl = createCinematicAutomotiveIntroTimeline(
+          {
+            blackoutVeil: blackoutVeilRef.current,
+            studioAtmosphere: studioAtmosphereRef.current,
+            technicalSignals: [
+              signal01Ref.current,
+              signal02Ref.current,
+              signal03Ref.current,
+              signal04Ref.current,
+            ],
+            lightSweep: lightSweepRef.current,
+            vehicleStage: heroVehicleStageRef.current,
+            vehicleMask: vehicleMaskRef.current,
+            headlightGlow: headlightGlowRef.current,
+            grilleGlow: grilleGlowRef.current,
+            titleYear: titleYearRef.current,
+            titleMain: heroTitleRef.current,
+            titleChars: titleSplit?.chars,
+            titleSeries: heroSeriesRef.current,
+            seriesWords: seriesSplit?.words,
+            hairline: hairlineRef.current,
+            lead: heroLeadRef.current,
+            leadWords: leadSplit?.words,
+            scrollInvite: scrollInviteRef.current,
+            scrollInviteLine: scrollInviteLineRef.current,
+            hudItems: [hudLeftRef.current, hudRightRef.current, playheadRailRef.current],
+            footerActions: footerActionsRef.current,
+          },
+          {
+            onComplete: () => {
+              // Hand over to Phase 07: Living Micro-Movement (subtle continuous drift & breathing)
+              if (!prefersReducedMotion()) {
+                if (heroVehicleStageRef.current) {
+                  const carFloat = gsap.to(heroVehicleStageRef.current, {
+                    y: -4,
+                    scale: 1.006,
+                    duration: 6.5,
+                    ease: 'sine.inOut',
+                    yoyo: true,
+                    repeat: -1,
+                  })
+                  idleMotionTweensRef.current.push(carFloat)
+                }
+                if (studioAtmosphereRef.current) {
+                  const atmoPulse = gsap.to(studioAtmosphereRef.current, {
+                    opacity: 0.55,
+                    duration: 5.2,
+                    ease: 'sine.inOut',
+                    yoyo: true,
+                    repeat: -1,
+                  })
+                  idleMotionTweensRef.current.push(atmoPulse)
+                }
+              }
+            },
+          }
+        )
+        introTlRef.current = introTl
       }
 
       // Chapter 02: Form Timeline (with masked words)
@@ -497,14 +692,16 @@ export function CinematicStage() {
       )
       formTimelineRef.current = formTl
 
-      // Chapter 03: Chassis Architecture Timeline
+      // Chapter 03: Chassis Architecture Timeline (with masked words)
       const chassisTl = createChassisTimeline(
         {
           container: chassisLayerRef.current,
           badge: chassisBadgeRef.current,
           title: chassisTitleRef.current,
+          titleWords: chassisTitleSplit?.chars,
           hairline: chassisHairlineRef.current,
           lead: chassisLeadRef.current,
+          leadWords: chassisLeadSplit?.words,
           specs: chassisSpecsRefs.current,
         },
         { paused: true }
@@ -527,14 +724,16 @@ export function CinematicStage() {
       )
       powertrainTimelineRef.current = powertrainTl
 
-      // Chapter 05: Conclusion & Synthesis Timeline
+      // Chapter 05: Conclusion & Synthesis Timeline (with masked words)
       const conclusionTl = createConclusionTimeline(
         {
           container: conclusionLayerRef.current,
           badge: conclusionBadgeRef.current,
           title: conclusionTitleRef.current,
+          titleWords: conclusionTitleSplit?.chars,
           hairline: conclusionHairlineRef.current,
           lead: conclusionLeadRef.current,
+          leadWords: conclusionLeadSplit?.words,
           specs: conclusionSpecsRefs.current,
           ctaCue: conclusionCtaRef.current,
         },
@@ -543,70 +742,77 @@ export function CinematicStage() {
       conclusionTimelineRef.current = conclusionTl
 
       // ----------------------------------------------------------------------
-      // CHOREOGRAPH CONTINUOUS 5-CHAPTER NARRATIVE SEQUENCE
+      // CHOREOGRAPH CONTINUOUS 5-CHAPTER CAMERA-DRIVEN NARRATIVE SEQUENCE
       // ----------------------------------------------------------------------
       masterTl
-        // 01 // ARRIVAL (0.00 -> 0.22)
+        // 01 // ARRIVAL (0.00 -> 0.20)
         .add(arrivalTl, 0)
         .addLabel('arrivalEnd', 2.0)
 
-        // Handoff 01 -> 02: Arrival and Reveal fade out, Form emerges
+        // Handoff 01 -> 02: As camera pushes in and pans right toward front detail,
+        // arrival text recedes upward into spatial depth, form section glides into open negative space
         .to(
-          [arrivalLayerRef.current, revealLayerRef.current],
-          { opacity: 0, y: -25, duration: 0.4, ease: 'power2.inOut' },
+          arrivalLayerRef.current,
+          { opacity: 0, x: -35, y: -45, duration: 0.45, ease: 'power2.inOut' },
           'arrivalEnd'
         )
-        .to(
+        .fromTo(
           formLayerRef.current,
-          { opacity: 1, pointerEvents: 'auto', duration: 0.4, ease: 'power2.out' },
+          { opacity: 0, x: -45, y: 15 },
+          { opacity: 1, x: 0, y: 0, pointerEvents: 'auto', duration: 0.45, ease: 'power2.out' },
           'arrivalEnd+=0.1'
         )
 
-        // 02 // FORM (0.22 -> 0.44)
+        // 02 // FORM & AERODYNAMICS (0.20 -> 0.45)
         .add(formTl, 'arrivalEnd+=0.2')
-        .addLabel('formEnd', 4.2)
+        .addLabel('formEnd', 4.5)
 
-        // Handoff 02 -> 03: Form fades out, Chassis emerges
+        // Handoff 02 -> 03: As camera sweeps down the flank, form sweeps out to the left
+        // and chassis architecture section emerges from the right
         .to(
           formLayerRef.current,
-          { opacity: 0, y: -25, duration: 0.4, ease: 'power2.inOut' },
+          { opacity: 0, x: -60, y: -20, duration: 0.45, ease: 'power2.inOut' },
           'formEnd'
         )
-        .to(
+        .fromTo(
           chassisLayerRef.current,
-          { opacity: 1, pointerEvents: 'auto', duration: 0.4, ease: 'power2.out' },
+          { opacity: 0, x: 55, y: 0 },
+          { opacity: 1, x: 0, y: 0, pointerEvents: 'auto', duration: 0.45, ease: 'power2.out' },
           'formEnd+=0.1'
         )
 
-        // 03 // ARCHITECTURE / CHASSIS (0.44 -> 0.68)
+        // 03 // ARCHITECTURE / CHASSIS (0.45 -> 0.70)
         .add(chassisTl, 'formEnd+=0.2')
-        .addLabel('chassisEnd', 6.6)
+        .addLabel('chassisEnd', 7.0)
 
-        // Handoff 03 -> 04: Chassis fades out, Powertrain emerges
+        // Handoff 03 -> 04: As camera tracks back to the forward engine bay,
+        // chassis slides out and powertrain emerges into the foreground
         .to(
           chassisLayerRef.current,
-          { opacity: 0, y: -25, duration: 0.4, ease: 'power2.inOut' },
+          { opacity: 0, x: 60, y: -20, duration: 0.45, ease: 'power2.inOut' },
           'chassisEnd'
         )
-        .to(
+        .fromTo(
           powertrainLayerRef.current,
-          { opacity: 1, pointerEvents: 'auto', duration: 0.4, ease: 'power2.out' },
+          { opacity: 0, x: -45, y: 25 },
+          { opacity: 1, x: 0, y: 0, pointerEvents: 'auto', duration: 0.45, ease: 'power2.out' },
           'chassisEnd+=0.1'
         )
 
-        // 04 // POWERTRAIN (0.68 -> 0.88)
+        // 04 // POWERTRAIN (0.70 -> 0.88)
         .add(powertrainTl, 'chassisEnd+=0.2')
-        .addLabel('powertrainEnd', 8.6)
+        .addLabel('powertrainEnd', 8.8)
 
-        // Handoff 04 -> 05: Powertrain fades out, Conclusion emerges
+        // Handoff 04 -> 05: As camera pulls back to full car, powertrain dissolves and conclusion settles
         .to(
           powertrainLayerRef.current,
-          { opacity: 0, y: -25, duration: 0.4, ease: 'power2.inOut' },
+          { opacity: 0, y: -35, scale: 0.96, duration: 0.45, ease: 'power2.inOut' },
           'powertrainEnd'
         )
-        .to(
+        .fromTo(
           conclusionLayerRef.current,
-          { opacity: 1, pointerEvents: 'auto', duration: 0.4, ease: 'power2.out' },
+          { opacity: 0, y: 30, scale: 0.98 },
+          { opacity: 1, y: 0, scale: 1.0, pointerEvents: 'auto', duration: 0.45, ease: 'power2.out' },
           'powertrainEnd+=0.1'
         )
 
@@ -622,7 +828,7 @@ export function CinematicStage() {
         pin: true,
         start: 'top top',
         end: '+=4200',
-        scrub: 1,
+        scrub: 0.25,
         animation: masterTl,
         id: 'cinematic-story-stage',
         markers: showMarkers
@@ -635,38 +841,30 @@ export function CinematicStage() {
           : false,
         onUpdate: (self) => {
           const globalProgress = self.progress
-          const scrollVelocity = self.getVelocity() / 1000
+          const rawVelocity = self.getVelocity()
+          const scrollVelocity = rawVelocity / 1000
           const isPinned = self.isActive && globalProgress > 0.001 && globalProgress < 0.999
+
+          // Ensure vehicle is never sliced by stuck clipPath during scroll
+          if (vehicleMaskRef.current && vehicleMaskRef.current.style.clipPath !== 'none') {
+            vehicleMaskRef.current.style.clipPath = 'none'
+          }
+          if (introTlRef.current && introTlRef.current.isActive() && globalProgress > 0.005) {
+            introTlRef.current.progress(1)
+          }
 
           const storyState = getStoryState(globalProgress, scrollVelocity, isPinned)
 
           // 1. Scrub MotionEngine canvas frames
           engine.setTargetProgress(globalProgress)
 
-          // 2. Camera Rig Approach & Composition
-          if (cameraRigRef.current) {
-            const cameraScale = 0.92 + globalProgress * 0.14
-            const cameraPanX =
-              storyState.activeScene.id === 'powertrain'
-                ? 18 * storyState.localProgress
-                : 0
-            cameraRigRef.current.style.transform = `scale(${cameraScale.toFixed(4)}) translate3d(${cameraPanX.toFixed(1)}px, 0, 0)`
-          }
+          // 2. Feed authoritative shared motion physics
+          setScrollMotion(globalProgress, rawVelocity, self.direction as -1 | 0 | 1)
 
-          // 3. Layered Parallax with Velocity Drift
-          if (bgGridRef.current) {
-            const bgY = globalProgress * -40 + clamp(scrollVelocity * -6, -10, 10)
-            bgGridRef.current.style.transform = `translate3d(0, ${bgY.toFixed(2)}px, 0)`
-          }
-
-          if (annotationsLayerRef.current) {
-            const annoY = globalProgress * -65 + clamp(scrollVelocity * -12, -18, 18)
-            annotationsLayerRef.current.style.transform = `translate3d(0, ${annoY.toFixed(2)}px, 0)`
-          }
-
-          if (foregroundLayerRef.current) {
-            const foreY = globalProgress * -90 + clamp(scrollVelocity * -16, -22, 22)
-            foregroundLayerRef.current.style.transform = `translate3d(0, ${foreY.toFixed(2)}px, 0)`
+          // 3. Continuous Virtual Camera Progression
+          if (!prefersReducedMotion()) {
+            const pose = calculateCameraPose(globalProgress)
+            currentScrollPoseRef.current = pose
           }
 
           // 4. Zero-React-Render Telemetry Direct DOM Updates
@@ -738,6 +936,138 @@ export function CinematicStage() {
       splitReverts.forEach((revert) => revert()) // Restores original DOM strings cleanly
     }
   }, [showMarkers, engine])
+
+  // ==========================================================================
+  // STEP 3: DAMPED AUTOMOTIVE INSPECTION & SCROLL + POINTER TICKER
+  // ==========================================================================
+  useEffect(() => {
+    if (prefersReducedMotion()) return
+
+    let lastTime = performance.now()
+
+    const onVehicleTick = () => {
+      const now = performance.now()
+      const dt = Math.min((now - lastTime) / 1000, 0.1)
+      lastTime = now
+
+      // 1. Step the Master Shared Motion Physics Engine (One source of truth)
+      const motion = stepSharedMotionPhysics(dt)
+      const sPose = currentScrollPoseRef.current
+
+      // 2. Virtual Camera Viewport (Scroll Framing + Spring-Damped Camera Mass + Zoom Momentum)
+      const finalScale = sPose.scale * motion.cameraScaleMultiplier
+      const finalCameraX = sPose.x + motion.cameraOffsetX
+      const finalCameraY = sPose.y + motion.cameraOffsetY
+
+      if (cameraRigRef.current) {
+        cameraRigRef.current.style.transform = `scale(${finalScale.toFixed(4)}) translate3d(${finalCameraX.toFixed(1)}px, ${finalCameraY.toFixed(1)}px, 0)`
+      }
+
+      // 3. Layered Parallax with Velocity Momentum
+      const globalProgress = motion.progress
+      if (bgGridRef.current) {
+        const bgY = globalProgress * -45 + motion.typographyShiftY * 0.4
+        const bgScale = 1 + (globalProgress >= 0.45 && globalProgress <= 0.70 ? 0.04 : 0) + Math.abs(motion.normalizedVelocity) * 0.015
+        bgGridRef.current.style.transform = `translate3d(0, ${bgY.toFixed(2)}px, 0) scale(${bgScale.toFixed(4)})`
+        bgGridRef.current.style.opacity = (0.4 + (globalProgress >= 0.45 && globalProgress <= 0.70 ? 0.45 : 0) + Math.abs(motion.normalizedVelocity) * 0.22).toFixed(3)
+      }
+
+      if (annotationsLayerRef.current) {
+        const annoY = globalProgress * -75 + motion.typographyShiftY * 0.7
+        annotationsLayerRef.current.style.transform = `translate3d(0, ${annoY.toFixed(2)}px, 0)`
+      }
+
+      if (foregroundLayerRef.current) {
+        const foreY = globalProgress * -105 + motion.typographyShiftY
+        foregroundLayerRef.current.style.transform = `translate3d(0, ${foreY.toFixed(2)}px, 0)`
+      }
+
+      // 4. Background Architectural Typographic Drift (Horizontal typography)
+      if (archWatermarkRef.current) {
+        const watermarkX = globalProgress * -420 + motion.typographyShiftY * 0.8
+        archWatermarkRef.current.style.transform = `translate3d(${watermarkX.toFixed(1)}px, 0, 0)`
+      }
+
+      // 5. Secondary Typography Subtle Kinetic Response
+      // Subtle vertical stretch and skew on secondary HUD / Phase elements; primary hero title remains crisp
+      if (phaseNameRef.current) {
+        phaseNameRef.current.style.transform = `scaleY(${motion.typographyStretch.toFixed(4)}) skewY(${motion.typographySkew.toFixed(2)}deg)`
+      }
+
+      // Subtle inertia offset on secondary metadata and chapter category tags
+      const secondaryTypoOffset = motion.typographyShiftY * 0.35
+      if (hudLeftRef.current) {
+        hudLeftRef.current.style.transform = `translate3d(0, ${(secondaryTypoOffset * 0.7).toFixed(1)}px, 0)`
+      }
+      if (hudRightRef.current) {
+        hudRightRef.current.style.transform = `translate3d(0, ${(secondaryTypoOffset * 0.7).toFixed(1)}px, 0)`
+      }
+      if (modelTagRef.current) {
+        modelTagRef.current.style.transform = `translate3d(0, ${secondaryTypoOffset.toFixed(1)}px, 0)`
+      }
+      if (formBadgeRef.current) {
+        formBadgeRef.current.style.transform = `translate3d(0, ${secondaryTypoOffset.toFixed(1)}px, 0)`
+      }
+      if (chassisBadgeRef.current) {
+        chassisBadgeRef.current.style.transform = `translate3d(0, ${secondaryTypoOffset.toFixed(1)}px, 0)`
+      }
+      if (powertrainBadgeRef.current) {
+        powertrainBadgeRef.current.style.transform = `translate3d(0, ${secondaryTypoOffset.toFixed(1)}px, 0)`
+      }
+      if (conclusionBadgeRef.current) {
+        conclusionBadgeRef.current.style.transform = `translate3d(0, ${secondaryTypoOffset.toFixed(1)}px, 0)`
+      }
+
+      // Atmospheric reactivity
+      if (studioAtmosphereRef.current) {
+        const baseAtmo = 0.28 + (globalProgress >= 0.70 && globalProgress <= 0.88 ? 0.15 : 0)
+        studioAtmosphereRef.current.style.opacity = (baseAtmo + Math.abs(motion.normalizedVelocity) * 0.22).toFixed(3)
+      }
+
+      // 5. Physical Automotive Attitude (1.5-ton unibody mass, pitch, yaw, roll, and lateral displacement)
+      if (heroVehicleStageRef.current) {
+        heroVehicleStageRef.current.style.transform =
+          `perspective(1200px) rotateX(${motion.vehiclePitch.toFixed(2)}deg) rotateY(${motion.vehicleYaw.toFixed(2)}deg) rotateZ(${motion.vehicleRoll.toFixed(2)}deg) translate3d(${motion.vehicleTransX.toFixed(1)}px, ${motion.vehicleTransY.toFixed(1)}px, 0)`
+      }
+
+      // 6. Anchored Studio Ground Contact Shadow (1.5-ton unibody mass, pitch, and yaw grounding)
+      if (groundShadowRef.current) {
+        const shadowScale = 1 + Math.abs(motion.vehiclePitch) * 0.03
+        const finalShadowOpacity = sPose.shadowOpacity * (1 - Math.abs(motion.vehicleTransY) * 0.012)
+        groundShadowRef.current.style.opacity = Math.max(0.42, finalShadowOpacity).toFixed(3)
+        groundShadowRef.current.style.transform =
+          `translate3d(${(motion.vehicleTransX * 0.68).toFixed(1)}px, 0, 0) scaleX(${shadowScale.toFixed(3)}) rotateZ(${(-motion.vehicleYaw * 0.45).toFixed(2)}deg)`
+      }
+
+      // 7. Dynamic Studio Lighting Response (Specular glints track pointer angle)
+      if (headlightGlowRef.current) {
+        const glowAlpha = sPose.headlightGlow * motion.reflectionFactor
+        headlightGlowRef.current.style.opacity = glowAlpha.toFixed(3)
+        headlightGlowRef.current.style.transform = `translate3d(${motion.specularShiftX.toFixed(1)}px, ${motion.specularShiftY.toFixed(1)}px, 0)`
+      }
+
+      if (grilleGlowRef.current) {
+        const glowAlpha = sPose.grilleGlow * motion.reflectionFactor
+        grilleGlowRef.current.style.opacity = glowAlpha.toFixed(3)
+        grilleGlowRef.current.style.transform = `translate3d(${(motion.specularShiftX * 0.8).toFixed(1)}px, ${(motion.specularShiftY * 0.8).toFixed(1)}px, 0)`
+      }
+
+      // 8. Studio Light Sweep across Satin Silver paintwork (pointer and velocity coupled)
+      if (lightSweepRef.current) {
+        const pointerSweepOffset = motion.smoothedNX * 12
+        lightSweepRef.current.style.transform = `translateX(${(sPose.lightSweepX + pointerSweepOffset).toFixed(1)}%) rotate(${motion.lightAngle.toFixed(1)}deg)`
+        lightSweepRef.current.style.opacity = (0.28 + sPose.keyIntensity * 0.20 + Math.abs(motion.normalizedVelocity) * 0.14).toFixed(3)
+      }
+    }
+
+    gsap.ticker.add(onVehicleTick)
+
+    return () => {
+      gsap.ticker.remove(onVehicleTick)
+      introTlRef.current?.kill()
+      idleMotionTweensRef.current.forEach((t) => t.kill())
+    }
+  }, [])
 
   // ==========================================================================
   // TIMELINE PLAYBACK CONTROLLER HANDLERS
@@ -906,11 +1236,61 @@ export function CinematicStage() {
         stageHeight="100vh"
       >
         <div ref={stageOverlayRef} className="cinema-viewport-overlay">
+          {/* PHASE 01: Deep Obsidian Blackout Veil & Studio Atmosphere */}
+          <div ref={blackoutVeilRef} className="cinema-blackout-veil" aria-hidden="true" />
+          <div ref={studioAtmosphereRef} className="cinema-studio-atmosphere" aria-hidden="true" />
+
+          {/* PHASE 02: Perimeter Editorial Technical Signals */}
+          <div className="cinema-tech-signals-perimeter" aria-hidden="true">
+            <span ref={signal01Ref} className="cinema-tech-signal cinema-tech-signal--tl">
+              ARCHIVE // 07
+            </span>
+            <span ref={signal02Ref} className="cinema-tech-signal cinema-tech-signal--tr">
+              MODEL // ACCORD
+            </span>
+            <span ref={signal03Ref} className="cinema-tech-signal cinema-tech-signal--bl">
+              YEAR // 2003
+            </span>
+            <span ref={signal04Ref} className="cinema-tech-signal cinema-tech-signal--br">
+              GENERATION // VII
+            </span>
+          </div>
+
           {/* DEPTH LAYER 1: Background CAD Coordinate Drafting Grid (rate 0.02) */}
           <div ref={bgGridRef} className="cinema-parallax-bg-grid" aria-hidden="true" />
 
+          {/* DEPTH LAYER 1.5: Horizontal Architectural Watermark Ribbon (Controlled Drift) */}
+          <div ref={archWatermarkRef} className="cinema-arch-watermark" aria-hidden="true">
+            <span className="cinema-watermark-track">
+              HONDA MOTOR CO. · 2003 ACCORD · SEVENTH GENERATION · CM-SERIES ARCHIVE · AERODYNAMIC WEDGE · 240 HP VTEC · DOUBLE-WISHBONE
+            </span>
+          </div>
+
           {/* DEPTH LAYER 2: Camera Rig Viewport Wrapper */}
           <div ref={cameraRigRef} className="cinema-camera-rig">
+            {/* PHASE 03, 04, 05: CINEMATIC AUTOMOTIVE HERO STAGE (The Protagonist) */}
+            <div
+              ref={heroVehicleStageRef}
+              className="cinema-hero-vehicle-stage"
+              aria-label="2003 Honda Accord Studio Presentation"
+              data-cursor="explore"
+              data-cursor-label="EXPLORE ACCORD"
+            >
+              <div ref={vehicleMaskRef} className="cinema-vehicle-mask-container">
+                <img
+                  src="/images/accord-hero.jpg"
+                  alt="2003 Honda Accord sedan in Satin Silver, studio three-quarter profile"
+                  className="cinema-vehicle-hero-img"
+                  loading="eager"
+                />
+                <div ref={lightSweepRef} className="cinema-light-sweep" aria-hidden="true" />
+                <div ref={headlightGlowRef} className="cinema-headlight-specular" aria-hidden="true" />
+                <div ref={grilleGlowRef} className="cinema-grille-specular" aria-hidden="true" />
+                <VehicleHoverZones />
+              </div>
+              <div ref={groundShadowRef} className="cinema-vehicle-ground-shadow" aria-hidden="true" />
+            </div>
+
             {/* DEPTH LAYER 3: Secondary Technical Annotations (rate 0.10) */}
             <div ref={annotationsLayerRef} className="cinema-parallax-annotations">
               <TechnicalLabelLayer currentFrame={annotationFrame} />
@@ -941,7 +1321,13 @@ export function CinematicStage() {
               </header>
 
               {/* TIMELINE SCRUBBER RAIL: Direct DOM playhead width updates */}
-              <div ref={playheadRailRef} className="cinema-playhead-rail" aria-hidden="true">
+              <div
+                ref={playheadRailRef}
+                className="cinema-playhead-rail"
+                aria-hidden="true"
+                data-cursor="scrub"
+                data-cursor-label="SCRUB TIMELINE"
+              >
                 <div ref={playheadFillRef} className="cinema-playhead-fill" />
               </div>
 
@@ -950,10 +1336,15 @@ export function CinematicStage() {
               {/* -------------------------------------------------------------- */}
               <div ref={arrivalLayerRef} className="cinema-layer-arrival container">
                 <div className="cinema-arrival-header">
-                  <span ref={modelTagRef} className="cinema-model-tag">
-                    HONDA · 2003 MODEL YEAR
-                  </span>
-                  <h1 ref={heroTitleRef} className="cinema-hero-title">
+                  <div className="cinema-title-year-wrap">
+                    <span ref={titleYearRef} className="cinema-title-year">
+                      2003
+                    </span>
+                    <span ref={modelTagRef} className="cinema-model-tag">
+                      HONDA · MODEL YEAR
+                    </span>
+                  </div>
+                  <h1 ref={heroTitleRef} className="cinema-hero-title type-hero-tracking">
                     ACCORD
                   </h1>
                   <p ref={heroSeriesRef} className="cinema-hero-series">
@@ -965,6 +1356,14 @@ export function CinematicStage() {
                     proportions, low-drag aerodynamic discipline, and the benchmark 240-horsepower
                     V6 VTEC.
                   </p>
+                </div>
+              </div>
+
+              {/* PHASE 08: Minimal Editorial Scroll Invitation */}
+              <div ref={scrollInviteRef} className="cinema-scroll-invite" aria-hidden="true">
+                <span className="cinema-scroll-invite-label">SCROLL TO EXPLORE</span>
+                <div ref={scrollInviteLineRef} className="cinema-scroll-invite-line">
+                  <div className="cinema-scroll-invite-runner" />
                 </div>
               </div>
 
@@ -1265,6 +1664,9 @@ export function CinematicStage() {
                       className="cinema-debug-toggle-btn"
                       onClick={() => setShowDebug(true)}
                       title="Show Storytelling Debug Monitor"
+                      data-cursor="magnetic"
+                      data-magnetic="true"
+                      data-name="DEBUG [D]"
                     >
                       DEBUG [D]
                     </button>
@@ -1273,6 +1675,11 @@ export function CinematicStage() {
                     ref={anchorLinkRef}
                     href="#specifications"
                     className="cinema-anchor-link"
+                    data-cursor="magnetic"
+                    data-magnetic="true"
+                    data-magnetic-radius="75"
+                    data-magnetic-max="12"
+                    data-name="SPECIFICATIONS ARCHIVE"
                     onClick={(e) => {
                       e.preventDefault()
                       scrollToTarget('#specifications')

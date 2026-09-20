@@ -123,9 +123,44 @@
   vertical-align: bottom;
 }
 
+.split-line-mask {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+}
+
 .masked-inner {
   display: inline-block;
   will-change: transform, opacity;
+}
+
+.split-line {
+  display: block;
+  will-change: transform, opacity;
+}
+
+/* Hero Tracking & Masking Controller */
+.type-hero-tracking {
+  letter-spacing: 0.04em;
+  transition: letter-spacing 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: letter-spacing;
+}
+
+/* Editorial Statement: Spatially balanced cinematic typography */
+.type-editorial-statement {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 3.5vw, 3.25rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+/* Kinetic Velocity Target: Subtle inertia response */
+.kinetic-velocity-secondary {
+  will-change: transform, opacity;
+  transform-origin: center center;
 }
 
 /* Technical CAD Marker: Precise engineering documentation labels */
@@ -167,3 +202,27 @@
   width: 1px;
   height: 7px;
 }
+
+/* Accessibility: Full static fallbacks for prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .split-char,
+  .masked-inner,
+  .split-line,
+  .kinetic-velocity-secondary {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  .mask-wrapper,
+  .split-line-mask {
+    overflow: visible !important;
+  }
+
+  .type-hero-tracking {
+    letter-spacing: 0.02em !important;
+    transition: none !important;
+  }
+}
+

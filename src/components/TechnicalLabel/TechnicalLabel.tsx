@@ -15,52 +15,52 @@ export const TECHNICAL_LABELS: TechnicalLabelData[] = [
   {
     id: '2003',
     code: 'HIST-03 // ERA',
-    title: '2003',
-    spec: 'CM-Series Inception',
+    title: 'YEAR / 2003',
+    spec: 'CM-Series Inception · VII Gen',
     description: 'The benchmark model year that redefined expectations for mid-size engineering discipline.',
     target: { x: 38, y: 54 },
-    labelPos: { x: 10, y: 22 },
-    frameRange: [20, 60],
+    labelPos: { x: 68, y: 22 },
+    frameRange: [18, 55],
   },
   {
     id: 'powertrain',
     code: 'ENG-J30A4 // PROPULSION',
-    title: 'POWERTRAIN',
-    spec: '3.0L VTEC V6 · 240 HP',
-    description: 'Linear power delivery across the rev range with variable valve timing and electronic lift control.',
-    target: { x: 22, y: 67 },
-    labelPos: { x: 6, y: 68 },
-    frameRange: [30, 75],
+    title: 'ENGINE / V6 VTEC',
+    spec: '3.0L VTEC · 240 HP @ 6,250 RPM',
+    description: 'Linear power delivery across the rev range with variable valve timing and electronic drive-by-wire throttle control.',
+    target: { x: 26, y: 58 },
+    labelPos: { x: 68, y: 38 },
+    frameRange: [28, 72],
   },
   {
     id: 'body',
     code: 'AERO-0.30 // EXTERIOR',
-    title: 'BODY',
-    spec: '0.30 Cd Aerodynamic Wedge',
+    title: 'AERO / 0.30 Cd',
+    spec: 'Low-Drag Wedge Profile',
     description: 'Continuous shoulder crease runs from front wheel arch to rear decklid, suppressing drag and high-speed turbulence.',
     target: { x: 62, y: 46 },
-    labelPos: { x: 44, y: 16 },
-    frameRange: [45, 85],
+    labelPos: { x: 70, y: 54 },
+    frameRange: [42, 82],
   },
   {
     id: 'platform',
     code: 'GEO-106.9 // SUSPENSION',
-    title: 'PLATFORM',
+    title: 'PLATFORM / WISHBONE',
     spec: '106.9" Wheelbase · Double-Wishbone',
     description: 'Rigid front subframe with double-wishbone suspension geometry engineered for neutral steering composure.',
     target: { x: 52, y: 73 },
-    labelPos: { x: 55, y: 80 },
-    frameRange: [50, 90],
+    labelPos: { x: 68, y: 70 },
+    frameRange: [48, 88],
   },
   {
     id: '7th-gen',
     code: 'SPEC-07 // CHASSIS',
-    title: '7TH GENERATION',
+    title: 'GENERATION / VII',
     spec: '48% High-Tensile Steel',
-    description: 'Monocoque unit-body architecture delivering class-leading torsional rigidity and five-star crash protection.',
-    target: { x: 74, y: 33 },
-    labelPos: { x: 74, y: 20 },
-    frameRange: [60, 98],
+    description: 'Laser-welded monocoque unit-body architecture delivering class-leading torsional rigidity and five-star crash protection.',
+    target: { x: 74, y: 36 },
+    labelPos: { x: 72, y: 24 },
+    frameRange: [58, 98],
   },
 ]
 
@@ -81,15 +81,15 @@ export function TechnicalLabelLayer({ currentFrame }: TechnicalLabelLayerProps) 
           const isActive = currentFrame >= item.frameRange[0] && currentFrame <= item.frameRange[1]
           if (!isActive) return null
 
-          const elbowX = item.target.x
-          const elbowY = item.labelPos.y + 4
+          const elbowX = Math.max(item.target.x + 6, item.labelPos.x - 4)
+          const elbowY = item.labelPos.y + 3.5
 
           return (
-            <g key={item.id} className="tech-label-connector">
+            <g key={item.id} className="tech-label-connector tech-connector-active">
               <circle cx={item.target.x} cy={item.target.y} r="0.8" className="tech-pin-core" />
               <circle cx={item.target.x} cy={item.target.y} r="2.0" className="tech-pin-ring" />
               <polyline
-                points={`${item.target.x},${item.target.y} ${elbowX},${elbowY} ${item.labelPos.x + 6},${elbowY}`}
+                points={`${item.target.x},${item.target.y} ${elbowX},${elbowY} ${item.labelPos.x},${elbowY}`}
                 className="tech-rule-line"
               />
             </g>
@@ -105,7 +105,7 @@ export function TechnicalLabelLayer({ currentFrame }: TechnicalLabelLayerProps) 
           return (
             <div
               key={item.id}
-              className="tech-label-card"
+              className="tech-label-card tech-card-active kinetic-velocity-secondary"
               style={{
                 left: `${item.labelPos.x}%`,
                 top: `${item.labelPos.y}%`,

@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { prefersReducedMotion } from '../animation/gsapConfig'
 
 import { setScrollMotion } from './unifiedMotion'
+import { setMasterCinematicProgress } from '../animation/cinematicDirector'
 
 // Register ScrollTrigger plugin with GSAP (Step 9)
 gsap.registerPlugin(ScrollTrigger)
@@ -84,16 +85,16 @@ export function initLenis(): Lenis | null {
     return null
   }
 
-  // 1. Instantiate Lenis with tailored automotive luxury easing curve
-  // Exponential decay curve: starts with immediate physical response, decelerates smoothly without bouncing
+  // 1. Instantiate Lenis with tailored automotive luxury physical lerp
+  // Linear interpolation physics: responsive initiation, buttery smooth inertial glide
   lenisInstance = new Lenis({
-    duration: 1.2,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    lerp: 0.085,
     orientation: 'vertical',
     gestureOrientation: 'vertical',
     smoothWheel: true,
-    wheelMultiplier: 1.0,
-    touchMultiplier: 1.5,
+    wheelMultiplier: 0.95,
+    touchMultiplier: 1.4,
+    autoRaf: false,
     infinite: false,
   })
 
@@ -101,8 +102,7 @@ export function initLenis(): Lenis | null {
   currentTelemetry.isEnabled = true
 
   // 2. Synchronize Lenis with GSAP's ticker (SINGLE RAF LOOP RULE)
-  // Instead of running a separate requestAnimationFrame loop inside Lenis,
-  // we feed GSAP's frame time into lenis.raf(time * 1000).
+  // We feed GSAP's frame time into lenis.raf(time * 1000).
   tickerCallback = (time: number) => {
     if (lenisInstance && isSmoothEnabled) {
       lenisInstance.raf(time * 1000)
@@ -110,6 +110,8 @@ export function initLenis(): Lenis | null {
   }
 
   gsap.ticker.add(tickerCallback)
+  // Disable GSAP lag smoothing to eliminate ticker delta clamping during heavy 3D rendering
+  gsap.ticker.lagSmoothing(0)
 
   // 3. Bridge Lenis scroll events to ScrollTrigger (Official GSAP + Lenis integration)
   lenisInstance.on('scroll', ScrollTrigger.update)
@@ -154,6 +156,9 @@ export function initLenis(): Lenis | null {
         e.velocity,
         dir === 'DOWN' ? 1 : dir === 'UP' ? -1 : 0
       )
+
+      // Step 14: Synchronize Master Cinematic Director State
+      setMasterCinematicProgress(progress, e.velocity)
     }
   )
 
@@ -280,6 +285,7 @@ export function destroyLenis(): void {
       gsap.ticker.remove(tickerCallback)
       tickerCallback = null
     }
+    gsap.ticker.lagSmoothing(500, 33)
     if (lenisInstance) {
       lenisInstance.destroy()
       lenisInstance = null

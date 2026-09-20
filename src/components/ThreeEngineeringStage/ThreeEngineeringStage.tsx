@@ -10,6 +10,15 @@ import { sampleChoreography } from '../../three/camera/cameraChoreography'
 import type { CameraStateId } from '../../three/camera/cameraTypes'
 import { scrollToTarget } from '../../motion/lenisManager'
 import { prefersReducedMotion } from '../../animation/gsapConfig'
+import {
+  useExplodedState,
+  toggleExplodedState,
+  selectExplodedComponent,
+} from '../../three/exploded/explodedStore'
+import {
+  COMPONENT_MAP,
+  ENGINEERING_COMPONENTS,
+} from '../../three/exploded/explodedComponents'
 import './ThreeEngineeringStage.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -51,6 +60,11 @@ export function ThreeEngineeringStage() {
   const architectureAnnotationRef = useRef<HTMLDivElement>(null)
 
   const [activeWpId, setActiveWpId] = useState<CameraStateId>('ARRIVAL')
+  const exploded = useExplodedState()
+  const activeComponent =
+    (exploded.selectedId && COMPONENT_MAP.get(exploded.selectedId)) ||
+    (exploded.hoveredId && COMPONENT_MAP.get(exploded.hoveredId)) ||
+    null
 
   useEffect(() => {
     if (prefersReducedMotion()) return
@@ -124,7 +138,7 @@ export function ThreeEngineeringStage() {
         start: 'top top',
         end: '+=250%', // 2.5 screen-heights of pinned continuous scroll
         pin: stickyContentRef.current,
-        scrub: 1.0,   // 1.0s physical catch-up damping matching Lenis virtual scroll
+        scrub: 0.3,   // Responsive physical damping matching Lenis virtual scroll
         animation: tl,
         id: 'three-stage-choreography-pin',
         anticipatePin: 1,
@@ -183,6 +197,57 @@ export function ThreeEngineeringStage() {
 
               {/* Technical Specifications & Waypoint Sequence Sidebar */}
               <aside className="three-stage__sidebar" aria-label="Camera Waypoint Sequence">
+                {/* Step 9 Exploded View Interactive Toggle (Requirement 15) */}
+                <button
+                  type="button"
+                  className={`three-stage__explode-toggle ${
+                    exploded.isExploded ? 'three-stage__explode-toggle--active' : ''
+                  }`}
+                  onClick={() => toggleExplodedState()}
+                  aria-pressed={exploded.isExploded}
+                  aria-label="Toggle Exploded Engineering View"
+                >
+                  <span className="three-stage__explode-icon">⚙</span>
+                  <span className="three-stage__explode-text">
+                    {exploded.isExploded ? 'ASSEMBLED ARCHITECTURE' : 'EXPLORE SYSTEMS'}
+                  </span>
+                  <span className="three-stage__explode-badge">
+                    {Math.round(exploded.progress * 100)}%
+                  </span>
+                </button>
+
+                {/* Step 9 Active Component Detail Card (Requirement 17) */}
+                {activeComponent && (
+                  <div className="three-stage__component-inspector">
+                    <div className="three-stage__inspector-header">
+                      <span className="three-stage__inspector-tag">
+                        {activeComponent.category} // ARCHIVE
+                      </span>
+                      <button
+                        type="button"
+                        className="three-stage__inspector-close"
+                        onClick={() => selectExplodedComponent(null)}
+                        title="Deselect component"
+                        aria-label="Deselect component"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <h4 className="three-stage__inspector-title">{activeComponent.label}</h4>
+                    <p className="three-stage__inspector-desc">{activeComponent.description}</p>
+                    {activeComponent.specs && (
+                      <div className="three-stage__inspector-specs">
+                        {activeComponent.specs.map((spec, idx) => (
+                          <div key={idx} className="three-stage__spec-item">
+                            <span className="three-stage__spec-k">{spec.label}</span>
+                            <span className="three-stage__spec-v">{spec.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="three-stage__step-card">
                   <span ref={waypointTagRef} className="three-stage__step-tag">
                     CH-01 // ARRIVAL
@@ -216,6 +281,29 @@ export function ThreeEngineeringStage() {
                     <div style={{ marginTop: '2px', color: 'var(--color-text-secondary)' }}>
                       LOCAL INSPECTION: <strong className="three-arch-val" style={{ color: 'var(--color-text-primary)' }}>0%</strong> | GLSL PARTING ACCENT: <strong style={{ color: 'var(--color-accent-red)' }}>ACTIVE</strong>
                     </div>
+                  </div>
+                </div>
+
+                {/* Accessible Subsystems List (Requirement 22 & 23) */}
+                <div className="three-stage__subsystems">
+                  <span className="three-stage__subsystems-label">ENGINEERING SUBSYSTEMS</span>
+                  <div className="three-stage__subsystems-grid" role="tablist" aria-label="Engineering Subsystems">
+                    {ENGINEERING_COMPONENTS.map((comp) => (
+                      <button
+                        key={comp.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={exploded.selectedId === comp.id}
+                        className={`three-stage__comp-btn ${
+                          exploded.selectedId === comp.id ? 'three-stage__comp-btn--selected' : ''
+                        }`}
+                        onClick={() =>
+                          selectExplodedComponent(exploded.selectedId === comp.id ? null : comp.id)
+                        }
+                      >
+                        {comp.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 

@@ -1,0 +1,239 @@
+/* ============================================================================
+   SPATIAL 3D TECHNICAL ANNOTATIONS STYLING (Step 9 — Exploded View)
+   ============================================================================ */
+
+.exploded-html-wrapper {
+  pointer-events: none;
+  user-select: none;
+}
+
+.exploded-callout-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  outline: none;
+}
+
+/* 3D Reticle Point */
+.exploded-reticle-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-accent, #c8102e);
+  border: 1.5px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(200, 16, 46, 0.6);
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exploded-reticle-dot::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--color-accent, #c8102e);
+  opacity: 0.7;
+  animation: reticlePulseRing 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes reticlePulseRing {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.9;
+  }
+}
+
+.exploded-callout-node:hover .exploded-reticle-dot,
+.exploded-callout-node.is-selected .exploded-reticle-dot {
+  transform: translate(-50%, -50%) scale(1.4);
+  box-shadow: 0 0 14px rgba(200, 16, 46, 0.9);
+  background-color: #ffffff;
+  border-color: var(--color-accent-red, #c8102e);
+}
+
+/* Thin Restrained Editorial Leader Line */
+.exploded-leader-line {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(200, 16, 46, 0.85) 0%,
+    rgba(140, 148, 158, 0.45) 50%,
+    rgba(140, 148, 158, 0.15) 100%
+  );
+  transition: height 0.25s ease, background 0.25s ease;
+}
+
+.exploded-callout-node.leader-up .exploded-leader-line {
+  bottom: 0;
+  left: 0;
+  height: 38px;
+}
+
+.exploded-callout-node.leader-down .exploded-leader-line {
+  top: 0;
+  left: 0;
+  height: 38px;
+}
+
+.exploded-callout-node:hover .exploded-leader-line,
+.exploded-callout-node.is-selected .exploded-leader-line {
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent-red, #c8102e) 0%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+}
+
+/* Technical Callout Card */
+.exploded-callout-card {
+  margin-left: 14px;
+  background: hsla(220, 14%, 8%, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(140, 148, 158, 0.22);
+  border-left: 2px solid var(--color-accent-red, #c8102e);
+  border-radius: 2px;
+  padding: 0.55rem 0.85rem;
+  min-width: 180px;
+  max-width: 280px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exploded-callout-node.leader-up .exploded-callout-card {
+  transform: translateY(-38px);
+}
+
+.exploded-callout-node.leader-down .exploded-callout-card {
+  transform: translateY(18px);
+}
+
+.exploded-callout-node:hover .exploded-callout-card,
+.exploded-callout-node.is-selected .exploded-callout-card {
+  border-color: rgba(200, 16, 46, 0.6);
+  border-left-color: #ffffff;
+  background: hsla(220, 16%, 10%, 0.95);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 0 16px rgba(200, 16, 46, 0.2);
+}
+
+/* Callout Content Typography */
+.exploded-callout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.2rem;
+}
+
+.exploded-callout-category {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--color-accent, #8ea0b5);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.exploded-callout-id {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted, #5a6472);
+}
+
+.exploded-callout-title {
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, sans-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Expanded Inspection Details */
+.exploded-callout-expanded {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(140, 148, 158, 0.18);
+  animation: explodedFadeIn 0.2s ease forwards;
+}
+
+@keyframes explodedFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.exploded-callout-desc {
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary, #b4bcc8);
+  margin: 0 0 0.45rem 0;
+}
+
+.exploded-callout-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.exploded-spec-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+}
+
+.exploded-spec-label {
+  color: var(--color-text-muted, #727c8c);
+  letter-spacing: 0.06em;
+}
+
+.exploded-spec-val {
+  color: var(--color-accent-red, #c8102e);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Focus outline for keyboard navigation accessibility */
+.exploded-callout-node:focus-visible .exploded-callout-card {
+  outline: 2px solid var(--color-accent-red, #c8102e);
+  outline-offset: 2px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .exploded-callout-card {
+    min-width: 150px;
+    max-width: 220px;
+    padding: 0.4rem 0.6rem;
+  }
+  .exploded-callout-title {
+    font-size: 0.7rem;
+  }
+  .exploded-callout-desc {
+    font-size: 0.62rem;
+  }
+}

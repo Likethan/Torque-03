@@ -40,9 +40,20 @@ export function setupStudioLighting(scene: THREE.Scene): StudioLights {
   const ambientLight = new THREE.AmbientLight(0x222831, 0.75)
   scene.add(ambientLight)
 
-  // 2. Key Light: High-angle studio softbox tone (#f5f6f8)
-  const keyLight = new THREE.DirectionalLight(0xf5f6f8, 1.9)
+  // 2. Key Light: High-angle studio softbox tone (#f5f6f8) with soft PCF directional shadows
+  const keyLight = new THREE.DirectionalLight(0xf5f6f8, 1.85)
   keyLight.position.set(4.5, 6.0, 3.5)
+  keyLight.castShadow = true
+  keyLight.shadow.mapSize.width = 1024
+  keyLight.shadow.mapSize.height = 1024
+  keyLight.shadow.camera.near = 0.5
+  keyLight.shadow.camera.far = 25
+  keyLight.shadow.camera.left = -4.5
+  keyLight.shadow.camera.right = 4.5
+  keyLight.shadow.camera.top = 4.5
+  keyLight.shadow.camera.bottom = -4.5
+  keyLight.shadow.bias = -0.0004
+  keyLight.shadow.normalBias = 0.03
   scene.add(keyLight)
 
   // 3. Rim / Accent Light: Cool titanium white (#8ea0b5) for sharp edge definition
@@ -61,4 +72,37 @@ export function setupStudioLighting(scene: THREE.Scene): StudioLights {
     rimLight,
     fillLight,
   }
+}
+
+/**
+ * Live updates studio lights from dynamic runtime lighting state values.
+ */
+export function updateStudioLights(
+  lights: StudioLights,
+  keyPos: THREE.Vector3,
+  keyColor: THREE.Color,
+  keyIntensity: number,
+  rimPos: THREE.Vector3,
+  rimColor: THREE.Color,
+  rimIntensity: number,
+  fillPos: THREE.Vector3,
+  fillColor: THREE.Color,
+  fillIntensity: number,
+  ambientColor: THREE.Color,
+  ambientIntensity: number
+): void {
+  lights.keyLight.position.copy(keyPos)
+  lights.keyLight.color.copy(keyColor)
+  lights.keyLight.intensity = keyIntensity
+
+  lights.rimLight.position.copy(rimPos)
+  lights.rimLight.color.copy(rimColor)
+  lights.rimLight.intensity = rimIntensity
+
+  lights.fillLight.position.copy(fillPos)
+  lights.fillLight.color.copy(fillColor)
+  lights.fillLight.intensity = fillIntensity
+
+  lights.ambientLight.color.copy(ambientColor)
+  lights.ambientLight.intensity = ambientIntensity
 }

@@ -1,5 +1,5 @@
 /* ============================================================================
-   TECHNICAL LABEL EDITORIAL STYLING (Step 3)
+   TECHNICAL LABEL EDITORIAL STYLING (Step 5 — Kinetic Typography System)
    ============================================================================ */
 
 .tech-labels-layer {
@@ -18,7 +18,20 @@
 }
 
 .tech-label-connector {
-  transition: opacity 250ms ease;
+  transition: opacity 300ms ease;
+}
+
+.tech-connector-active {
+  animation: techConnectorFadeIn 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes techConnectorFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .tech-pin-core {
@@ -28,16 +41,41 @@
 .tech-pin-ring {
   fill: none;
   stroke: var(--color-accent-red-muted);
-  stroke-width: 0.4;
-  opacity: 0.7;
+  stroke-width: 0.45;
+  opacity: 0.85;
+  animation: pinRingPulse 2.8s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+@keyframes pinRingPulse {
+  0%, 100% {
+    stroke-width: 0.45;
+    opacity: 0.7;
+  }
+  50% {
+    stroke-width: 0.8;
+    opacity: 1;
+  }
 }
 
 .tech-rule-line {
   fill: none;
-  stroke: hsla(220, 6%, 40%, 0.5);
-  stroke-width: 0.35;
-  stroke-dasharray: 2 1.5;
+  stroke: hsla(220, 10%, 55%, 0.65);
+  stroke-width: 0.4;
+  stroke-dasharray: 4 2;
   vector-effect: non-scaling-stroke;
+  animation: ruleLineDraw 500ms ease-out forwards;
+}
+
+@keyframes ruleLineDraw {
+  from {
+    stroke-dashoffset: 40;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
 }
 
 .tech-labels-container {
@@ -52,23 +90,36 @@
   width: clamp(210px, 17vw, 260px);
   background-color: var(--color-hud-bg);
   border: 1px solid var(--color-hud-border);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 0.75rem 0.9rem;
   border-radius: 1px;
   box-shadow: 0 4px 20px hsla(220, 10%, 2%, 0.7);
-  animation: techLabelFadeIn 250ms ease forwards;
+  transition:
+    border-color var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-precise);
 }
 
-@keyframes techLabelFadeIn {
+.tech-card-active {
+  animation: techLabelCardReveal 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes techLabelCardReveal {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(10px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
+}
+
+.tech-label-card:hover {
+  border-color: hsla(220, 15%, 45%, 0.55);
+  box-shadow: 0 6px 24px hsla(220, 10%, 2%, 0.85);
+  transform: translateY(-2px);
 }
 
 .tech-label-card:focus-visible {
@@ -132,7 +183,7 @@
 
   .tech-labels-container {
     position: absolute;
-    bottom: 4rem;
+    bottom: 4.5rem;
     left: var(--container-pad);
     right: var(--container-pad);
     top: auto;
@@ -141,6 +192,7 @@
     gap: var(--space-sm);
     padding-bottom: var(--space-xs);
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
   .tech-label-card {
@@ -149,5 +201,26 @@
     top: auto !important;
     flex-shrink: 0;
     width: 220px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-card-active {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .tech-pin-ring {
+    animation: none !important;
+  }
+
+  .tech-rule-line {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .tech-label-card:hover {
+    transform: none !important;
   }
 }

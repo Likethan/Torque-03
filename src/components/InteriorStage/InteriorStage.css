@@ -1,0 +1,292 @@
+/* ============================================================================
+   INTERIOR CAMERA TRANSITION STAGE (Step 10 — Interior Camera Transition)
+   ============================================================================ */
+
+.interior-stage-section {
+  position: relative;
+  background-color: var(--color-bg-primary, #0c0e12);
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  border-bottom: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.interior-stage-pin-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.interior-stage-sticky-content {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--space-2xl, 4rem);
+  padding-bottom: var(--space-2xl, 4rem);
+  box-sizing: border-box;
+}
+
+.interior-stage__header {
+  margin-bottom: var(--space-xl, 2rem);
+}
+
+.interior-stage__label {
+  display: inline-block;
+  margin-bottom: var(--space-xs, 0.5rem);
+  color: var(--color-accent-red, #c8102e);
+}
+
+.interior-stage__title {
+  margin-bottom: var(--space-xs, 0.5rem);
+}
+
+.interior-stage__intro {
+  max-width: 68ch;
+  color: var(--color-text-secondary, #9da4b0);
+  line-height: 1.6;
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.interior-stage__grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: var(--space-xl, 2rem);
+  align-items: stretch;
+}
+
+.interior-stage__viewport-container {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  height: 560px;
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 2px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, #161a22 0%, #0c0e12 100%);
+}
+
+/* Sidebar with Technical Specifications & Waypoint Sequence */
+.interior-stage__sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-md, 1rem);
+  background: rgba(18, 21, 26, 0.65);
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding: var(--space-lg, 1.5rem);
+  border-radius: 2px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.interior-stage__step-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.interior-stage__step-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--color-accent-red, #c8102e);
+  text-transform: uppercase;
+}
+
+.interior-stage__step-heading {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #f0f3f8);
+  margin: 0;
+}
+
+.interior-stage__step-desc {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-secondary, #9da4b0);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Cabin Focal Points / Target Selector */
+.interior-stage__targets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: var(--space-sm, 0.75rem);
+}
+
+.interior-stage__targets-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary, #606877);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.interior-stage__targets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.interior-stage__target-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.5rem;
+  background: rgba(14, 17, 21, 0.6);
+  border: 1px solid var(--color-hud-border, rgba(255, 255, 255, 0.12));
+  border-radius: 2px;
+  color: var(--color-text-tertiary, #858e9d);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+  text-align: center;
+}
+
+.interior-stage__target-btn:hover {
+  border-color: var(--color-accent, #4078c0);
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(26, 31, 38, 0.85);
+}
+
+.interior-stage__target-btn--selected {
+  border-color: var(--color-accent-red, #c8102e);
+  background: rgba(200, 16, 46, 0.14);
+  color: var(--color-text-primary, #ffffff);
+  font-weight: 500;
+}
+
+/* Waypoint Navigator Buttons */
+.interior-stage__waypoint-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: var(--space-md, 1rem);
+}
+
+.interior-stage__nav-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary, #606877);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.interior-stage__waypoint-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.interior-stage__waypoint-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.6rem;
+  background: rgba(14, 17, 21, 0.6);
+  border: 1px solid var(--color-hud-border, rgba(255, 255, 255, 0.12));
+  border-radius: 2px;
+  color: var(--color-text-tertiary, #858e9d);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+  text-align: left;
+}
+
+.interior-stage__waypoint-btn:hover {
+  border-color: var(--color-accent, #4078c0);
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(26, 31, 38, 0.8);
+}
+
+.interior-stage__waypoint-btn--active {
+  border-color: var(--color-accent-red, #c8102e);
+  background: rgba(200, 16, 46, 0.12);
+  color: var(--color-text-primary, #ffffff);
+  font-weight: 500;
+}
+
+.interior-stage__waypoint-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary, #606877);
+  opacity: 0.4;
+}
+
+.interior-stage__waypoint-btn--active .interior-stage__waypoint-indicator {
+  background: var(--color-accent-red, #c8102e);
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(200, 16, 46, 0.8);
+}
+
+/* Scrub Progress Gauges */
+.interior-stage__scrub-guide {
+  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: var(--space-sm, 0.75rem);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  color: var(--color-text-tertiary, #858e9d);
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+}
+
+.interior-stage__scrub-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+}
+
+.interior-stage__scrub-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.interior-stage__scrub-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--color-hud-border, rgba(255, 255, 255, 0.12));
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.interior-stage__scrub-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--color-accent-red, #c8102e);
+  transition: width 0.08s linear;
+}
+
+.interior-stage__scrub-percent {
+  font-weight: 600;
+  color: var(--color-accent-red, #c8102e);
+  min-width: 36px;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .interior-stage__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg, 1.5rem);
+  }
+  .interior-stage__viewport-container {
+    height: 440px;
+    min-height: 400px;
+  }
+  .interior-stage-sticky-content {
+    min-height: auto;
+  }
+}

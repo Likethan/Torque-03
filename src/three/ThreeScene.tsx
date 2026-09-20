@@ -7,8 +7,9 @@ import { createStudioRenderer, isWebGLAvailable, resizeRenderer, disposeRenderer
 import { setupStudioLighting } from './lights'
 import { createEngineeringAssembly } from './objects'
 import { updateThreeTelemetry, setThreeInactive } from './telemetry'
-import { getInteractionState } from '../interaction/interactionStore'
 import { prefersReducedMotion } from '../animation/gsapConfig'
+import { getUnifiedMotionState } from '../motion/unifiedMotion'
+import { dampDt } from '../motion/lerp'
 import './ThreeScene.css'
 
 export interface ThreeSceneHandle {
@@ -162,16 +163,19 @@ export const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(
             shaft.rotation.x += dtSeconds * 1.35
           }
 
-          // B. Step 12 Interaction Response (Subtle Pointer Camera Look-Around)
+          // B. Step 4 Interaction Response (Subtle Pointer Camera Look-Around with physical mass)
+          const dt = Math.min(Math.max(deltaTime * 0.001, 0.001), 0.1)
           if (interactive && !isReducedMotion) {
-            const pointerState = getInteractionState()
-            if (!pointerState.touchMode) {
+            const motion = getUnifiedMotionState()
+            if (!motion.isTouch) {
               // Subtle, restrained camera parallax (max ±0.35m horizontal, ±0.22m vertical)
-              const offsetX = pointerState.smoothedNX * 0.35
-              const offsetY = -pointerState.smoothedNY * 0.22
-              cam.position.x = baseCameraPosition.current.x + offsetX
-              cam.position.y = baseCameraPosition.current.y + offsetY
-              cam.position.z = baseCameraPosition.current.z
+              const targetX = baseCameraPosition.current.x + motion.smoothedNX * 0.35
+              const targetY = baseCameraPosition.current.y - motion.smoothedNY * 0.22
+              const targetZ = baseCameraPosition.current.z
+
+              cam.position.x = dampDt(cam.position.x, targetX, 7.5, dt)
+              cam.position.y = dampDt(cam.position.y, targetY, 7.5, dt)
+              cam.position.z = dampDt(cam.position.z, targetZ, 7.5, dt)
             } else {
               cam.position.copy(baseCameraPosition.current)
             }

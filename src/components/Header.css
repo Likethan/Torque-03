@@ -57,7 +57,15 @@
   letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--color-text-tertiary);
-  /* motion-nav-link class handles the transition */
+  transition:
+    color var(--motion-duration-fast) var(--motion-ease-standard),
+    letter-spacing var(--motion-duration-standard) var(--motion-ease-emphasis),
+    opacity var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.header__nav-link:hover {
+  color: var(--color-text-primary);
+  letter-spacing: 0.16em;
 }
 
 @media (max-width: 768px) {

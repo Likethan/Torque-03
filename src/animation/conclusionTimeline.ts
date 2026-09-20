@@ -1,9 +1,9 @@
 /**
- * CONCLUSION & SYNTHESIS TIMELINE (Step 10 - Advanced Scroll Storytelling)
+ * CONCLUSION & SYNTHESIS TIMELINE (Step 5 - Kinetic Typography)
  *
  * Choreographs the Chapter 05 Conclusion & Narrative Handoff:
  * 1. Synthesis Badge emergence
- * 2. Synthesis Title & Narrative Lead
+ * 2. Masked-word baseline reveal of Title ("Engineering as a Complete Discipline")
  * 3. Accent hairline rule
  * 4. Staggered engineering synthesis cards
  * 5. Downstream handoff cue into specifications archive
@@ -17,8 +17,10 @@ export interface ConclusionTimelineTargets {
   container: HTMLElement | null
   badge: HTMLElement | null
   title: HTMLElement | null
+  titleWords?: HTMLElement[]
   hairline: HTMLElement | null
   lead: HTMLElement | null
+  leadWords?: HTMLElement[]
   specs: (HTMLElement | null)[]
   ctaCue: HTMLElement | null
 }
@@ -49,13 +51,13 @@ export function createConclusionTimeline(
   if (targets.badge) {
     gsap.set(targets.badge, { opacity: 0, x: -15 })
   }
-  if (targets.title) {
+  if (targets.title && !targets.titleWords) {
     gsap.set(targets.title, { opacity: 0, y: 20 })
   }
   if (targets.hairline) {
     gsap.set(targets.hairline, { scaleX: 0, transformOrigin: 'left center' })
   }
-  if (targets.lead) {
+  if (targets.lead && !targets.leadWords) {
     gsap.set(targets.lead, { opacity: 0, y: 15 })
   }
   if (targets.ctaCue) {
@@ -96,8 +98,21 @@ export function createConclusionTimeline(
     )
   }
 
-  // 3. Title reveal
-  if (targets.title) {
+  // 3. Title reveal (Masked words if split, otherwise element fromTo)
+  if (targets.titleWords && targets.titleWords.length > 0) {
+    tl.fromTo(
+      targets.titleWords,
+      { opacity: 0, y: '105%' },
+      {
+        opacity: 1,
+        y: '0%',
+        duration: 0.65,
+        stagger: 0.06,
+        ease: 'power3.out',
+      },
+      'conclusionStart+=0.25'
+    )
+  } else if (targets.title) {
     tl.to(
       targets.title,
       {
@@ -123,7 +138,20 @@ export function createConclusionTimeline(
   }
 
   // 5. Narrative Lead
-  if (targets.lead) {
+  if (targets.leadWords && targets.leadWords.length > 0) {
+    tl.fromTo(
+      targets.leadWords,
+      { opacity: 0, y: 14 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        stagger: 0.018,
+        ease: 'power2.out',
+      },
+      'conclusionStart+=0.4'
+    )
+  } else if (targets.lead) {
     tl.to(
       targets.lead,
       {

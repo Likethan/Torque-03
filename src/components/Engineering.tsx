@@ -59,7 +59,7 @@ export function Engineering() {
         start: 'top 80%', // Target top reaches 80% from top of viewport
         end: 'top 25%',   // Target top reaches 25% from top of viewport
         animation: archTl,
-        scrub: 1,         // 1.0s physical catch-up damping
+        scrub: 0.3,       // Responsive physical catch-up damping
         id: 'architecture-scene',
       })
     }, sectionRef)

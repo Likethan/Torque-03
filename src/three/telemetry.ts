@@ -48,6 +48,22 @@ export interface ThreeTelemetryState {
   shaderReveal: number
   shaderIntensity: number
   shaderCustomStatus: string
+  // Step 10 Interior Camera Transition telemetry
+  interiorProgress: number
+  cameraMode: string
+  isInsideCabin: boolean
+  // Step 11 Road Driving Sequence telemetry
+  roadProgress: number
+  roadPhase: string
+  roadSpeedKmh: number
+  roadDistanceMeters: number
+  // Step 12 Environmental Interaction & Weather telemetry
+  weatherState: string
+  timeOfDay: string
+  rainIntensity: number
+  roadWetness: number
+  windIntensity: number
+  fogIntensity: number
 }
 
 export interface ThreeDOMBindings {
@@ -86,6 +102,22 @@ export interface ThreeDOMBindings {
   shaderRevealEl?: HTMLElement | null
   shaderIntensityEl?: HTMLElement | null
   shaderCustomStatusEl?: HTMLElement | null
+  // Step 10 Interior Camera Transition DOM elements
+  interiorProgressEl?: HTMLElement | null
+  cameraModeEl?: HTMLElement | null
+  cabinStatusEl?: HTMLElement | null
+  // Step 11 Road Driving DOM elements
+  roadProgressEl?: HTMLElement | null
+  roadPhaseEl?: HTMLElement | null
+  roadSpeedEl?: HTMLElement | null
+  roadDistanceEl?: HTMLElement | null
+  // Step 12 Environmental Weather DOM elements
+  weatherStateEl?: HTMLElement | null
+  timeOfDayEl?: HTMLElement | null
+  rainIntensityEl?: HTMLElement | null
+  roadWetnessEl?: HTMLElement | null
+  windIntensityEl?: HTMLElement | null
+  fogIntensityEl?: HTMLElement | null
 }
 
 const state: ThreeTelemetryState = {
@@ -123,6 +155,22 @@ const state: ThreeTelemetryState = {
   shaderReveal: 0,
   shaderIntensity: 1.0,
   shaderCustomStatus: 'ACTIVE (GLSL Custom Material)',
+  // Step 10 Interior Camera Transition initial state
+  interiorProgress: 0,
+  cameraMode: 'EXTERIOR',
+  isInsideCabin: false,
+  // Step 11 Road Driving Sequence initial state
+  roadProgress: 0,
+  roadPhase: 'PH-01 // COCKPIT DEPARTURE',
+  roadSpeedKmh: 0,
+  roadDistanceMeters: 0,
+  // Step 12 Environmental Interaction & Weather initial state
+  weatherState: 'CLEAR',
+  timeOfDay: 'LATE_AFTERNOON',
+  rainIntensity: 0,
+  roadWetness: 0,
+  windIntensity: 0.15,
+  fogIntensity: 0.012,
 }
 
 const activeBindings: Set<ThreeDOMBindings> = new Set()
@@ -296,6 +344,56 @@ export function setThreeInactive(): void {
 }
 
 /**
+ * Updates telemetry values for Step 10 Interior Camera Transition.
+ */
+export function updateInteriorTelemetry(
+  interiorProgress: number,
+  cameraMode: string,
+  isInside: boolean
+): void {
+  state.interiorProgress = interiorProgress
+  state.cameraMode = cameraMode
+  state.isInsideCabin = isInside
+  updateDOMBindings()
+}
+
+/**
+ * Updates telemetry values for Step 11 Road Cinematic Sequence.
+ */
+export function updateRoadTelemetry(
+  roadProgress: number,
+  roadPhase: string,
+  speedKmh: number,
+  distanceMeters: number
+): void {
+  state.roadProgress = roadProgress
+  state.roadPhase = roadPhase
+  state.roadSpeedKmh = speedKmh
+  state.roadDistanceMeters = distanceMeters
+  updateDOMBindings()
+}
+
+/**
+ * Updates Step 12 Environmental Interaction & Weather telemetry.
+ */
+export function updateEnvironmentTelemetry(
+  weatherState: string,
+  timeOfDay: string,
+  rainIntensity: number,
+  roadWetness: number,
+  windIntensity: number,
+  fogIntensity: number
+): void {
+  state.weatherState = weatherState
+  state.timeOfDay = timeOfDay
+  state.rainIntensity = rainIntensity
+  state.roadWetness = roadWetness
+  state.windIntensity = windIntensity
+  state.fogIntensity = fogIntensity
+  updateDOMBindings()
+}
+
+/**
  * Returns read-only snapshot of current 3D metrics.
  */
 export function getThreeTelemetry(): Readonly<ThreeTelemetryState> {
@@ -371,5 +469,29 @@ function updateDOMBindings(): void {
     if (b.shaderRevealEl) b.shaderRevealEl.textContent = `${(state.shaderReveal * 100).toFixed(1)}%`
     if (b.shaderIntensityEl) b.shaderIntensityEl.textContent = `${state.shaderIntensity.toFixed(2)}x`
     if (b.shaderCustomStatusEl) b.shaderCustomStatusEl.textContent = state.shaderCustomStatus
+
+    // Step 10 Interior Telemetry elements
+    if (b.interiorProgressEl) b.interiorProgressEl.textContent = `${(state.interiorProgress * 100).toFixed(1)}%`
+    if (b.cameraModeEl) b.cameraModeEl.textContent = state.cameraMode
+    if (b.cabinStatusEl) {
+      b.cabinStatusEl.textContent = state.isInsideCabin ? 'CABIN ENVIRONMENT' : 'EXTERIOR'
+      b.cabinStatusEl.style.color = state.isInsideCabin
+        ? 'var(--color-technical-cyan, #00d4ff)'
+        : 'var(--color-text-secondary, #9da4b0)'
+    }
+
+    // Step 11 Road Telemetry elements
+    if (b.roadProgressEl) b.roadProgressEl.textContent = `${(state.roadProgress * 100).toFixed(1)}%`
+    if (b.roadPhaseEl) b.roadPhaseEl.textContent = state.roadPhase
+    if (b.roadSpeedEl) b.roadSpeedEl.textContent = `${Math.round(state.roadSpeedKmh)} km/h`
+    if (b.roadDistanceEl) b.roadDistanceEl.textContent = `${Math.round(state.roadDistanceMeters)} m`
+
+    // Step 12 Environmental Weather Telemetry elements
+    if (b.weatherStateEl) b.weatherStateEl.textContent = state.weatherState
+    if (b.timeOfDayEl) b.timeOfDayEl.textContent = state.timeOfDay
+    if (b.rainIntensityEl) b.rainIntensityEl.textContent = `${(state.rainIntensity * 100).toFixed(0)}%`
+    if (b.roadWetnessEl) b.roadWetnessEl.textContent = `${(state.roadWetness * 100).toFixed(0)}%`
+    if (b.windIntensityEl) b.windIntensityEl.textContent = `${(state.windIntensity * 100).toFixed(0)}%`
+    if (b.fogIntensityEl) b.fogIntensityEl.textContent = `${(state.fogIntensity * 1000).toFixed(1)}`
   })
 }
